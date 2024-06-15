@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import reactLogo from './assets/react.svg';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import 'primereact/resources/themes/lara-light-indigo/theme.css'; //theme
@@ -14,31 +13,65 @@ import { Badge } from 'primereact/badge';
 import { supabase } from '../utils/supabase'
 import { Dialog } from 'primereact/dialog';
 import { Toast, ToastMessage } from 'primereact/toast';
-
+import CreateEvent from '../components/CreateEvent'
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import { Hour, hours } from '../constants/hours'
+import BtnAdd from '../components/buttons/BtnAdd'
+import BtnDelete from '../components/buttons/BtnDelete'
+import { Checkbox } from "primereact/checkbox";
 function App() {
+
   const [date, setDate] = useState<Nullable<Date>>(null);
-  const [code, setCode] = useState(null);
+  const [codeURL, setCodeURL] = useState();
+  const [codeExist, setCodeExist] = useState<boolean>(false);
+  const [eventName, setEventName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   
   const toast = useRef<Toast>(null);
 
   useEffect(() => {
-
-    // TEST
+    console.log('renderiza todo');
     
-    // const getCountries = async () => {
-    //   let { data } = await supabase.from('countries').select('name')
-    //   console.log(data);
-    // }
-    // getCountries()
+    const getEventName = async (code) => {
+      let { data } = await supabase.from('event').select('*').eq('code', code)
 
+      if (data?.length == 0){
+        showCodeNotExist(code)
+        setCodeExist(false)
+        return
+      }
+
+        const objResponse = data[0]
+        const eventName = objResponse.event_name
+        const description = objResponse.description
+        setEventName(eventName)
+        setDescription(description)
+        window.scrollTo(0, 0)
+        setCodeExist(true)
+
+    }
 
     const searchParams = new URLSearchParams(window.location.search);
     const code = searchParams.get('code');
-    setCode(code)
+    if (code){
+      setCodeURL(code)
+      getEventName(code)
+    }
   }, [])
+
+  const handleAdd = () => {
+    console.log('Add'); 
+  }
+  const handleDelete = () => {
+    console.log('handleDelete'); 
+  }
 
     const showSuccess = () => {
       toast.current?.show({severity:'success', summary: 'El evento', detail:'Ha sido creado con exito', life: 3000});
+    }
+
+    const showCodeNotExist = (code) => {
+      toast.current?.show({severity:'error', summary: `Código inexistente`, detail: `El evento con código ${code} no existe`, life: 3000});
     }
 
 
@@ -48,22 +81,23 @@ function App() {
 
     useEffect(() => {
 
-      let dateA = new Date()
-      dateA.setDate(15)
-      let dateB = new Date()
-      dateB.setDate(16)
-      let dateC = new Date()
-      dateC.setDate(17)
-      let dates = []
-      dates.push(dateA, dateB, dateC)
-      console.log(dates);
+      // let dateA = new Date()
+      // dateA.setDate(15)
+      // let dateB = new Date()
+      // dateB.setDate(16)
+      // let dateC = new Date()
+      // dateC.setDate(17)
+      // let dates = []
+      // dates.push(dateA, dateB, dateC)
+      // console.log(dates);
       
-      setDisponibility(dates)
+      // setDisponibility(dates)
       
     }, []);
 
     return(
       <div>
+            <h2>Result</h2>
         <div className="card flex justify-content-center">
             <Calendar value={disponibility}
               onChange={(e) => setDisponibility(e.value)}
@@ -76,8 +110,10 @@ function App() {
 
   const Calendary = () => {
 
+    type Mode = 'multiple' | 'range' | 'single';
     const [dates, setDates] = useState<Nullable<Date>>(null);
     const [time, setTime] = useState<Nullable<Date>>(null);
+    const [mode, setMode] = useState<Mode>('multiple');
 
     useEffect(() =>{
       console.log(dates);
@@ -102,13 +138,16 @@ function App() {
         <div>
           <h2>Date</h2>
           <div className='row'>
-            <Calendar style={{minWidth: 450}} value={dates} onChange={(e) => handleChange((e.value))} selectionMode="range" dateFormat='dd/mm/yy' />
+            <Calendar style={{minWidth: 450}} value={dates} onChange={(e) => handleChange((e.value))}
+              selectionMode={mode} dateFormat='dd/mm/yy' />
             <Button severity='success' label="Add" onClick={handleAdd} />
           </div>
           
         </div>
-          <Button label="Multiselect" severity='warning' size="small" />
-          <Button label="Range" severity='warning' size="small" />
+          <Button style={{height: 20, marginRight: 10, marginTop: 4}} disabled={mode == 'multiple'} label="Multiselect" 
+            severity='warning' size="small" onClick= {()=>setMode('multiple')} />
+          <Button style={{height: 20}} label="Range" severity='warning' size="small"
+            disabled={mode == 'range'}  onClick= {()=>setMode('range')} />
       </div>
       {/* <h2>Time</h2>
       <Calendar style={{width: 500}} value={time} onChange={(e) => setTime(e.value)} timeOnly /> */}
@@ -117,27 +156,88 @@ function App() {
     )
   }
 
+  
+
+  const WeekHours = () => {
+    const checks = { Lun: false, Mar: false, Mie: false, Jue: false, Vie: false, Sab: false, Dom: false }
+    const [checkeds, setCheckeds] = useState(checks);
+    const DayOfWeek = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
 
 
+  const Ranges = ( {day} ) => {
+
+    const [checked, setChecked] = useState<boolean>(false);
+    const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>({hour: '8:00'});
+    const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>({hour: '8:00'});
+
+    const handleChecked = () => {
+      let newChecks = checkeds
+      newChecks[day] = !newChecks[day]
+      setCheckeds(newChecks)
+      setChecked(checked => !checked)
+    }
+
+    const handleChangeSelectedStartHour = (hour: Hour) => {
+      setSelectedStartHour(hour)
+    }
+    const handleChangeSelectedEndHour = (hour: Hour) => {
+      setSelectedEndHour(hour)
+    }
+
+
+      return(
+        <>
+          <Checkbox onChange={handleChecked} checked={checked}></Checkbox>
+          <button style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexDirection: 'row', margin: 5, marginRight: 7}} onClick={() => handleChecked(day)}>
+            <p className='p-day'>{day}</p>
+          </button>
+          <div><Dropdown placeholder="Desde"value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedStartHour(e.value)} options={hours} optionLabel="hour" 
+            className="w-full md:w-8rem dropdown-hour" /></div> 
+          <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
+          <Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedEndHour(e.value)} options={hours} optionLabel="hour" 
+              className="w-full md:w-8rem dropdown-hour" />
+          <BtnAdd handleAdd={handleAdd} />
+          <BtnDelete handleDelete={handleDelete} />
+        </>
+        
+      )
+    }
+    
+    
+    return(
+      <aside style={{ flex: 1 }}>
+      <h2>Horas semanales</h2>
+      <div className="card flex justify-content-center align-items-center">
+        <div style={{ flexDirection: 'column', width: '100%' }}>
+          {DayOfWeek.map((day) => (
+            <div key={day} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: '0.5rem' }}>
+              <Ranges day={day} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </aside>
+    )
+  }
   const SectionCalendarys = () => {
 
+    
     return(
 
       <section>
         <header>
-          <h2>Nombre del evento</h2>
-          <p>codigo: {code}</p>
+          <h2>Evento: "{eventName}"</h2>
+          <p>codigo: {codeURL}</p>
+          {(description) && (<div style={{justifyContent: 'center', flex: 2, alignItems: 'center'}}><p className='description'>{description}</p></div>)}
+          
         </header>
         <div className='section-main'>
         
-        <aside style={{flex: 1}}>
-          <p>aside</p>
-        </aside> 
-        <div style={{flex: 4}}>
-          <h3>Select disponibility range</h3>
+        <WeekHours />
+        <div style={{flex: 3}}>
+          <h3>Disponibilidad</h3>
           <Calendary />
           <div style={{marginTop: 100}}>
-            <h2>Result</h2>
             <Disponibility />
           </div>
         </div>
@@ -154,70 +254,29 @@ function App() {
     
   }
 
-  const handleCreate = async (hide, e, code, eventName) => {
-    
-    const { data, error } = await supabase
-    .from('event')
-    .insert([
-      { code: code, event_name: eventName },
-    ])
-    .select()
-    
-    if (!error){
-      showSuccess()
-      setCode(code)
-      hide(e)
-    }
-    
-    
-  }
 
-  const CreateEvent = ( {hide} ) => {
 
-    const [eventName, setEventName] = useState<string>('');
-    const [code, setCode] = useState<string>('');
-    
-    return(
-      <div className="flex flex-column px-8 py-5 gap-4" style={{ borderRadius: '12px', backgroundImage: 'radial-gradient(circle at left top, var(--primary-400), var(--primary-700))' }}>
-          <div className="inline-flex flex-column gap-2">
-              <label htmlFor="eventname" className="text-primary-50 font-semibold">
-                  Nombre evento
-              </label>
-              <InputText id="eventname" label="eventname" value={eventName} onChange={(e) => setEventName((e.target.value))} ></InputText>
-          </div>
-          <div className="inline-flex flex-column gap-2">
-              <label htmlFor="code" className="text-primary-50 font-semibold">
-                  Código
-              </label>
-              <InputText id="code" label="code" value={code} onChange={(e) => setCode((e.target.value))} ></InputText>
-          </div>
-          <div className="flex align-items-center gap-2">
-              <Button label="Crear" severity='success' onClick={(e) => handleCreate(hide, e, code, eventName)} className="p-3 w-full"></Button>
-              <Button label="Cancelar" onClick={(e) => hide(e)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
-          </div>
-      </div>
-  )
-  }
   const NoCodeSection = () => {
-    const [inputCode, setInputCode] = useState<string>();
+    const [inputCode, setInputCode] = useState<string>('');
     const [dialogVisibility, setDialogVisibility] = useState<boolean>(false);
 
     return(
       <div>
         <h2>Ingresa a una sala</h2>
           <InputText placeholder='Codigo' value={inputCode} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputCode(e.target.value)} />
-          <a href="http://localhost:5173?code=fasfa" style={{marginLeft: 10}}><Button label='Ingresar' /></a>
+          <a href={`http://localhost:5173?code=${inputCode}`} style={{marginLeft: 10}}><Button label='Ingresar' /></a>
         <h2>Crear evento</h2>
         <Button label='Crear evento' onClick={() => setDialogVisibility(true)} />
         <Dialog
             visible={dialogVisibility}
             modal
             onHide={() => {if (!dialogVisibility) return; setDialogVisibility(false); }}
-            content={({ hide }) => (<CreateEvent hide={hide}/>)}
+            content={({ hide }) => (<CreateEvent hide={hide} showSuccess={showSuccess} setCodeURL={setCodeURL}/>)}
         ></Dialog>
       </div>
     )
   }
+
   return (
       
     <div>
@@ -225,8 +284,8 @@ function App() {
         <div className="card justify-content-center">
           <h1>Calendary</h1>
           <Toast ref={toast} position="top-center" />
-          {(!code) && (<NoCodeSection />)}
-          {(code) && (<SectionCalendarys />)}
+          {(!codeExist) && (<NoCodeSection />)}
+          {(codeExist) && (<SectionCalendarys />)}
         </div>
     </div>
   );

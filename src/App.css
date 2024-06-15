@@ -10,7 +10,6 @@
 }
 
 .section-main {
-  background-color: #ccc;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -21,4 +20,19 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+.description {
+  text-align: center;
+}
+
+.dropdown-hour {
+  height: 2.2rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.p-day {
+  font-size: 13;
+  font-weight: 700;
 }
