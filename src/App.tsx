@@ -19,6 +19,12 @@ import { Hour, hours } from '../constants/hours'
 import BtnAdd from '../components/buttons/BtnAdd'
 import BtnDelete from '../components/buttons/BtnDelete'
 import { Checkbox } from "primereact/checkbox";
+import { isValidRange } from '../utils/isValidRange'
+import { useMountEffect } from 'primereact/hooks';
+import { Messages } from 'primereact/messages';
+import { Message } from 'primereact/message';
+
+
 function App() {
 
   const [date, setDate] = useState<Nullable<Date>>(null);
@@ -163,12 +169,19 @@ function App() {
     const [checkeds, setCheckeds] = useState(checks);
     const DayOfWeek = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
 
-
   const Ranges = ( {day} ) => {
 
+    const [invalidRange, setInvalidRange] = useState<boolean>(false);
     const [checked, setChecked] = useState<boolean>(false);
-    const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>({hour: '8:00'});
-    const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>({hour: '8:00'});
+    const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>(null);
+    const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>(null);
+
+    const msgs = useRef<Messages>(null);
+
+    useMountEffect(() => {
+        msgs.current?.clear();
+        msgs.current?.show({ id: '1', sticky: true, severity: 'info', summary: 'Info', detail: 'Message Content', closable: false });
+    });
 
     const handleChecked = () => {
       let newChecks = checkeds
@@ -178,26 +191,31 @@ function App() {
     }
 
     const handleChangeSelectedStartHour = (hour: Hour) => {
-      setSelectedStartHour(hour)
+      (isValidRange(hour, selectedEndHour)) ? setSelectedStartHour(hour) : setInvalidRange(true)
+      
     }
     const handleChangeSelectedEndHour = (hour: Hour) => {
-      setSelectedEndHour(hour)
+      (isValidRange(selectedStartHour, hour)) ? setSelectedEndHour(hour) : setInvalidRange(true)
     }
 
 
       return(
         <>
+          {(invalidRange && (<div className="card flex"><Message severity='error' text="La hora de inicio debería ser menor a la hora de fín" /><p>alg</p></div>))}
+          
           <Checkbox onChange={handleChecked} checked={checked}></Checkbox>
           <button style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexDirection: 'row', margin: 5, marginRight: 7}} onClick={() => handleChecked(day)}>
             <p className='p-day'>{day}</p>
           </button>
-          <div><Dropdown placeholder="Desde"value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedStartHour(e.value)} options={hours} optionLabel="hour" 
+          <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedStartHour(e.value)} options={hours} optionLabel="hour" 
             className="w-full md:w-8rem dropdown-hour" /></div> 
           <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
-          <Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedEndHour(e.value)} options={hours} optionLabel="hour" 
-              className="w-full md:w-8rem dropdown-hour" />
+          <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedEndHour(e.value)} options={hours} optionLabel="hour" 
+              className="w-full md:w-8rem dropdown-hour" /></div>
           <BtnAdd handleAdd={handleAdd} />
           <BtnDelete handleDelete={handleDelete} />
+          
+
         </>
         
       )
