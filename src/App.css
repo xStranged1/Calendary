@@ -36,3 +36,12 @@
   font-size: 13;
   font-weight: 700;
 }
+
+.box-day {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}

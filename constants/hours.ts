@@ -1,7 +1,17 @@
 export interface Hour {
-    hour: string;
-  }
-  
+    hour: string | null;
+}
+export const DayOfWeek = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
+export const checks = { Lun: false, Mar: false, Mie: false, Jue: false, Vie: false, Sab: false, Dom: false }
+export const initialIntervals = {
+  'Lun': [],
+  'Mar': [],
+  'Mie': [],
+  'Jue': [],
+  'Vie': [],
+  'Sab': [],
+  'Dom': []
+}
 export const hours: Hour[] = [
     { hour: '00:00' }, { hour: '00:15' }, { hour: '00:30' }, { hour: '00:45' },
     { hour: '01:00' }, { hour: '01:15' }, { hour: '01:30' }, { hour: '01:45' },
@@ -28,3 +38,20 @@ export const hours: Hour[] = [
     { hour: '22:00' }, { hour: '22:15' }, { hour: '22:30' }, { hour: '22:45' },
     { hour: '23:00' }, { hour: '23:15' }, { hour: '23:30' }, { hour: '23:45' },
   ];
+  
+export interface Interval {
+  hourStart: Hour,
+  hourEnd: Hour,
+}
+
+export interface Intervals {
+'Lun': Interval[],
+'Mar': Interval[],
+'Mie': Interval[],
+'Jue': Interval[],
+'Vie': Interval[],
+'Sab': Interval[],
+'Dom': Interval[]
+}
+
+export type Mode = 'multiple' | 'range' | 'single';

@@ -14,10 +14,12 @@ import { supabase } from '../utils/supabase'
 import { Dialog } from 'primereact/dialog';
 import { Toast, ToastMessage } from 'primereact/toast';
 import CreateEvent from '../components/CreateEvent'
+
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
-import { Hour, hours } from '../constants/hours'
+import { checks, DayOfWeek, Hour, hours, initialIntervals, Interval, Intervals, Mode } from '../constants/hours'
 import BtnAdd from '../components/buttons/BtnAdd'
 import BtnDelete from '../components/buttons/BtnDelete'
+import BtnSubmit from '../components/buttons/BtnSubmit'
 import { Checkbox } from "primereact/checkbox";
 import { isValidRange } from '../utils/isValidRange'
 import { useMountEffect } from 'primereact/hooks';
@@ -65,12 +67,7 @@ function App() {
     }
   }, [])
 
-  const handleAdd = () => {
-    console.log('Add'); 
-  }
-  const handleDelete = () => {
-    console.log('handleDelete'); 
-  }
+ 
 
     const showSuccess = () => {
       toast.current?.show({severity:'success', summary: 'El evento', detail:'Ha sido creado con exito', life: 3000});
@@ -116,7 +113,6 @@ function App() {
 
   const Calendary = () => {
 
-    type Mode = 'multiple' | 'range' | 'single';
     const [dates, setDates] = useState<Nullable<Date>>(null);
     const [time, setTime] = useState<Nullable<Date>>(null);
     const [mode, setMode] = useState<Mode>('multiple');
@@ -165,18 +161,34 @@ function App() {
   
 
   const WeekHours = () => {
-    const checks = { Lun: false, Mar: false, Mie: false, Jue: false, Vie: false, Sab: false, Dom: false }
     const [checkeds, setCheckeds] = useState(checks);
-    const DayOfWeek = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
+    const [allIntervals, setAllIntervals] = useState<Intervals | null>(initialIntervals);
 
-  const Ranges = ( {day} ) => {
+    console.log('rendeweek');
+    console.log("allIntervals");
+    console.log(allIntervals);
+    
+    
+    const handleSubmit = () => {
+      console.log('handleSubmit'); 
+    }
+
+  const Day = ( {day} ) => {
 
     const [invalidRange, setInvalidRange] = useState<boolean>(false);
     const [checked, setChecked] = useState<boolean>(false);
+    const [change, setChange] = useState<boolean>(false);
     const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>(null);
     const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>(null);
-
+    const [intervals, setIntervals] = useState<Interval>([]);
     const msgs = useRef<Messages>(null);
+
+
+    console.log('rendeDay');
+    console.log("intervals");
+    console.log(intervals);
+    console.log("allIntervals");
+    console.log(allIntervals);
 
     useMountEffect(() => {
         msgs.current?.clear();
@@ -188,6 +200,9 @@ function App() {
       newChecks[day] = !newChecks[day]
       setCheckeds(newChecks)
       setChecked(checked => !checked)
+      if (checked){
+        setIntervals([])
+      }
     }
 
     const handleChangeSelectedStartHour = (hour: Hour) => {
@@ -197,25 +212,90 @@ function App() {
     const handleChangeSelectedEndHour = (hour: Hour) => {
       (isValidRange(selectedStartHour, hour)) ? setSelectedEndHour(hour) : setInvalidRange(true)
     }
+    
+    const handleAdd = () => {
+      if(!checked){
+        handleChecked()
+      }
+      let newInterval = intervals
+      let objNewInterval: Interval = {
+        hourStart: selectedStartHour,
+        hourEnd: selectedEndHour
+      }
 
+      newInterval.push(objNewInterval)
+      setIntervals(newInterval)
+
+      let newAllIntervals = allIntervals
+      newAllIntervals[day] = newInterval
+      setAllIntervals(newAllIntervals)
+      setChange(prev=>!prev)
+    }
+    const handleDelete = () => {
+      setIntervals([])
+    }
+
+    const Interval = ({data}) => {
+      const [interval, setInterval] = useState<Interval | null>(data);
+      const [selectedIntervalStartHour, setSelectedIntervalStartHour] = useState<Hour | null>(data.hourStart);
+      const [selectedIntervalEndHour, setSelectedIntervalEndHour] = useState<Hour | null>(data.hourEnd);
+
+      const handleDelete = () => {
+        setIntervals([])
+      }
+      const handleChangeStart = (hour) => {
+        if (isValidRange(hour, selectedIntervalEndHour)) setInvalidRange(true)
+        setSelectedIntervalStartHour(hour)
+      }
+      const handleChangeEnd = (hour) => {
+        if (isValidRange(selectedIntervalStartHour, hour)) setInvalidRange(true)
+        setSelectedIntervalEndHour(hour)
+      }
+      
+      return(
+        <div className='box-day'>
+          <div><Dropdown placeholder="Desde" value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeStart(e.value)} options={hours} optionLabel="hour" 
+              className="w-full md:w-8rem dropdown-hour"
+               /></div> 
+            <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
+            <div><Dropdown placeholder="Hasta" value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeEnd(e.value)} options={hours} optionLabel="hour" 
+              className="w-full md:w-8rem dropdown-hour" 
+              /></div>
+            <BtnDelete handleDelete={handleDelete} />
+        </div>
+      )
+    }
 
       return(
         <>
+        <div className='box-day'>
+          {/*
           {(invalidRange && (<div className="card flex"><Message severity='error' text="La hora de inicio debería ser menor a la hora de fín" /><p>alg</p></div>))}
-          
-          <Checkbox onChange={handleChecked} checked={checked}></Checkbox>
-          <button style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexDirection: 'row', margin: 5, marginRight: 7}} onClick={() => handleChecked(day)}>
-            <p className='p-day'>{day}</p>
-          </button>
-          <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedStartHour(e.value)} options={hours} optionLabel="hour" 
-            className="w-full md:w-8rem dropdown-hour" /></div> 
-          <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
-          <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedEndHour(e.value)} options={hours} optionLabel="hour" 
-              className="w-full md:w-8rem dropdown-hour" /></div>
-          <BtnAdd handleAdd={handleAdd} />
-          <BtnDelete handleDelete={handleDelete} />
-          
+          }
+          */}
+            <Checkbox onChange={handleChecked} checked={checked}></Checkbox>
+            <button style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexDirection: 'row', margin: 5, marginRight: 7}} onClick={() => handleChecked()}>
+              <p className='p-day'>{day}</p>
+            </button>
+            <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedStartHour(e.value)} options={hours} optionLabel="hour" 
+              className="w-full md:w-8rem dropdown-hour"
+              disabled={!checked} /></div> 
+            <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
+            <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedEndHour(e.value)} options={hours} optionLabel="hour" 
+              className="w-full md:w-8rem dropdown-hour" 
+              disabled={!checked}/></div>
+            <Button style={{marginLeft: 10, height: "2rem", width: "2rem"}}
+              onClick={handleAdd} severity='success' size='small' icon="pi pi-plus" />
+            <BtnDelete handleDelete={handleDelete} />
+        </div>
 
+            <div>
+                {intervals.map((interval) => (
+                      <Interval data={interval} />
+                  )
+                )}
+            </div> 
+          
         </>
         
       )
@@ -226,12 +306,13 @@ function App() {
       <aside style={{ flex: 1 }}>
       <h2>Horas semanales</h2>
       <div className="card flex justify-content-center align-items-center">
-        <div style={{ flexDirection: 'column', width: '100%' }}>
+        <div>
           {DayOfWeek.map((day) => (
-            <div key={day} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: '0.5rem' }}>
-              <Ranges day={day} />
+            <div key={day}>
+              <Day day={day} />
             </div>
           ))}
+          <BtnSubmit handleSubmit={handleSubmit} />
         </div>
       </div>
     </aside>
