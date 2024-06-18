@@ -72,6 +72,9 @@ function App() {
     const showSuccess = () => {
       toast.current?.show({severity:'success', summary: 'El evento', detail:'Ha sido creado con exito', life: 3000});
     }
+    const showSuccessAvaiable = () => {
+      toast.current?.show({severity:'success', summary: 'La disponibilidad', detail:'Ha sido guardada con exito', life: 3000});
+    }
 
     const showCodeNotExist = (code) => {
       toast.current?.show({severity:'error', summary: `Código inexistente`, detail: `El evento con código ${code} no existe`, life: 3000});
@@ -169,8 +172,19 @@ function App() {
     console.log(allIntervals);
     
     
-    const handleSubmit = () => {
-      console.log('handleSubmit'); 
+    const handleSubmit = async (allIntervals) => {
+      console.log('handleSubmit');
+      console.log(allIntervals);
+      const { data, error } = await supabase
+        .from('user')
+        .insert([
+          {avaiable: allIntervals},
+        ])
+        .select()
+        
+        if (!error){
+          showSuccessAvaiable()
+        }
     }
 
   const Day = ( {day} ) => {
@@ -180,7 +194,7 @@ function App() {
     const [change, setChange] = useState<boolean>(false);
     const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>(null);
     const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>(null);
-    const [intervals, setIntervals] = useState<Interval>([]);
+    const [intervals, setIntervals] = useState<Interval[]>([]);
     const msgs = useRef<Messages>(null);
 
 
@@ -205,12 +219,29 @@ function App() {
       }
     }
 
-    const handleChangeSelectedStartHour = (hour: Hour) => {
-      (isValidRange(hour, selectedEndHour)) ? setSelectedStartHour(hour) : setInvalidRange(true)
-      
-    }
-    const handleChangeSelectedEndHour = (hour: Hour) => {
-      (isValidRange(selectedStartHour, hour)) ? setSelectedEndHour(hour) : setInvalidRange(true)
+    const handleChangeSelectedHour = (hour: Hour, isStart) => {
+      let validRange;
+      if (isStart){
+        validRange = isValidRange(hour, selectedEndHour)
+        setSelectedStartHour(hour)
+      }else{
+        validRange = isValidRange(selectedStartHour, hour)
+        setSelectedEndHour(hour)
+      }
+
+      if(!validRange) setInvalidRange(true)
+
+      let objNewInterval: Interval = {
+        hourStart: (isStart) ? hour : selectedStartHour,
+        hourEnd: (isStart) ? selectedEndHour : hour
+      }
+
+      let newAllIntervals = allIntervals
+      let newInterval = newAllIntervals[day]
+      newInterval[0] = objNewInterval
+      setAllIntervals(newAllIntervals)
+
+
     }
     
     const handleAdd = () => {
@@ -233,35 +264,58 @@ function App() {
     }
     const handleDelete = () => {
       setIntervals([])
+
     }
 
-    const Interval = ({data}) => {
-      const [interval, setInterval] = useState<Interval | null>(data);
+    const Interval = ({data, indexInterval}) => {
       const [selectedIntervalStartHour, setSelectedIntervalStartHour] = useState<Hour | null>(data.hourStart);
       const [selectedIntervalEndHour, setSelectedIntervalEndHour] = useState<Hour | null>(data.hourEnd);
+      const [visible, setVisible] = useState<boolean>(true)
+      
+      const handleDeleteInterval = () => {
+        let newIntervals = intervals
+        newIntervals.splice(indexInterval, 1)
+        setIntervals(newIntervals)
+        setVisible(false)
+      }
+      const handleChangeInterval = (hour, isStart) => {
+        let isValid;
+        if (isStart) {
+          isValid = isValidRange(hour, selectedIntervalEndHour);
+          setSelectedIntervalStartHour(hour)
+        } else {
+          isValid = isValidRange(selectedIntervalStartHour, hour);
+          setSelectedIntervalEndHour(hour)
+        }
+        if (!isValid) setInvalidRange(true)
+        let newInterval = intervals
+        let objNewInterval: Interval = {
+          hourStart: (isStart) ? hour : selectedIntervalStartHour,
+          hourEnd: (isStart) ? selectedIntervalEndHour : hour
+        }
 
-      const handleDelete = () => {
-        setIntervals([])
-      }
-      const handleChangeStart = (hour) => {
-        if (isValidRange(hour, selectedIntervalEndHour)) setInvalidRange(true)
-        setSelectedIntervalStartHour(hour)
-      }
-      const handleChangeEnd = (hour) => {
-        if (isValidRange(selectedIntervalStartHour, hour)) setInvalidRange(true)
-        setSelectedIntervalEndHour(hour)
+        newInterval[indexInterval] = objNewInterval
+        setIntervals(newInterval)
+        console.log("newInterval");
+        console.log(newInterval);
+        
+        let newAllIntervals = allIntervals
+        newAllIntervals[day] = newInterval
+        setAllIntervals(newAllIntervals)
       }
       
+
+      
       return(
-        <div className='box-day'>
-          <div><Dropdown placeholder="Desde" value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeStart(e.value)} options={hours} optionLabel="hour" 
+        <div className={`box-day ${(!visible ? 'ds-none' : '')}`}>
+          <div><Dropdown placeholder={(selectedIntervalStartHour) ? selectedIntervalStartHour : "Desde"} value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, true)} options={hours} optionLabel="hour" 
               className="w-full md:w-8rem dropdown-hour"
                /></div> 
             <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
-            <div><Dropdown placeholder="Hasta" value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeEnd(e.value)} options={hours} optionLabel="hour" 
+            <div><Dropdown placeholder={(selectedIntervalEndHour) ? selectedIntervalEndHour : "Hasta"} value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, false)} options={hours} optionLabel="hour" 
               className="w-full md:w-8rem dropdown-hour" 
               /></div>
-            <BtnDelete handleDelete={handleDelete} />
+            <BtnDelete handleDelete={handleDeleteInterval} />
         </div>
       )
     }
@@ -277,11 +331,11 @@ function App() {
             <button style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexDirection: 'row', margin: 5, marginRight: 7}} onClick={() => handleChecked()}>
               <p className='p-day'>{day}</p>
             </button>
-            <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedStartHour(e.value)} options={hours} optionLabel="hour" 
+            <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, true)} options={hours} optionLabel="hour" 
               className="w-full md:w-8rem dropdown-hour"
               disabled={!checked} /></div> 
             <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
-            <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedEndHour(e.value)} options={hours} optionLabel="hour" 
+            <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, false)} options={hours} optionLabel="hour" 
               className="w-full md:w-8rem dropdown-hour" 
               disabled={!checked}/></div>
             <Button style={{marginLeft: 10, height: "2rem", width: "2rem"}}
@@ -290,8 +344,10 @@ function App() {
         </div>
 
             <div>
-                {intervals.map((interval) => (
-                      <Interval data={interval} />
+                {intervals.map((interval: Interval, indexInterval) => (
+                  <div key={indexInterval}>
+                      <Interval data={interval} indexInterval={indexInterval+1} />
+                  </div>
                   )
                 )}
             </div> 
@@ -312,7 +368,7 @@ function App() {
               <Day day={day} />
             </div>
           ))}
-          <BtnSubmit handleSubmit={handleSubmit} />
+          <BtnSubmit handleSubmit={() => handleSubmit(allIntervals)} />
         </div>
       </div>
     </aside>
@@ -379,13 +435,12 @@ function App() {
   return (
       
     <div>
-      
         <div className="card justify-content-center">
           <h1>Calendary</h1>
           <Toast ref={toast} position="top-center" />
           {(!codeExist) && (<NoCodeSection />)}
           {(codeExist) && (<SectionCalendarys />)}
-        </div>
+        T</div>
     </div>
   );
 }
