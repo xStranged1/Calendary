@@ -11,6 +11,7 @@ import { Nullable } from "primereact/ts-helpers";
 import { logDate } from '../utils/logDate'
 import { Badge } from 'primereact/badge';
 import { supabase } from '../utils/supabase'
+import { handleSubmitAvaiable } from '../utils/handleSubmitAvaiable'
 import { Dialog } from 'primereact/dialog';
 import { Toast, ToastMessage } from 'primereact/toast';
 import CreateEvent from '../components/CreateEvent'
@@ -34,6 +35,8 @@ function App() {
   const [codeExist, setCodeExist] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [user, setUser] = useState(null)
+  const [participants, setParticipants] = useState([])
   
   const toast = useRef<Toast>(null);
 
@@ -68,7 +71,9 @@ function App() {
   }, [])
 
  
-
+    const showSuccessAddUser = (name) => {
+      toast.current?.show({severity:'success', summary: `${name}`, detail:'Ha sido agregado al evento', life: 3000});
+    }
     const showSuccess = () => {
       toast.current?.show({severity:'success', summary: 'El evento', detail:'Ha sido creado con exito', life: 3000});
     }
@@ -85,25 +90,9 @@ function App() {
 
     const [disponibility, setDisponibility] = useState<Nullable<Date>>(null);
 
-    useEffect(() => {
-
-      // let dateA = new Date()
-      // dateA.setDate(15)
-      // let dateB = new Date()
-      // dateB.setDate(16)
-      // let dateC = new Date()
-      // dateC.setDate(17)
-      // let dates = []
-      // dates.push(dateA, dateB, dateC)
-      // console.log(dates);
-      
-      // setDisponibility(dates)
-      
-    }, []);
-
     return(
       <div>
-            <h2>Result</h2>
+            <h2>Fecha y hora estimada</h2>
         <div className="card flex justify-content-center">
             <Calendar value={disponibility}
               onChange={(e) => setDisponibility(e.value)}
@@ -171,21 +160,6 @@ function App() {
     console.log("allIntervals");
     console.log(allIntervals);
     
-    
-    const handleSubmit = async (allIntervals) => {
-      console.log('handleSubmit');
-      console.log(allIntervals);
-      const { data, error } = await supabase
-        .from('user')
-        .insert([
-          {avaiable: allIntervals},
-        ])
-        .select()
-        
-        if (!error){
-          showSuccessAvaiable()
-        }
-    }
 
   const Day = ( {day} ) => {
 
@@ -264,10 +238,15 @@ function App() {
     }
     const handleDelete = () => {
       setIntervals([])
-
+      let newAllIntervals = allIntervals
+      allIntervals[day] = []
+      setAllIntervals(allIntervals)
+      setSelectedStartHour(null)
+      setSelectedEndHour(null)
     }
 
     const Interval = ({data, indexInterval}) => {
+      
       const [selectedIntervalStartHour, setSelectedIntervalStartHour] = useState<Hour | null>(data.hourStart);
       const [selectedIntervalEndHour, setSelectedIntervalEndHour] = useState<Hour | null>(data.hourEnd);
       const [visible, setVisible] = useState<boolean>(true)
@@ -344,9 +323,9 @@ function App() {
         </div>
 
             <div>
-                {intervals.map((interval: Interval, indexInterval) => (
+                {intervals.map((interval: Interval, indexInterval) => (   /*testear aca*/ 
                   <div key={indexInterval}>
-                      <Interval data={interval} indexInterval={indexInterval+1} />
+                      <Interval data={interval} indexInterval={indexInterval} /> 
                   </div>
                   )
                 )}
@@ -368,12 +347,31 @@ function App() {
               <Day day={day} />
             </div>
           ))}
-          <BtnSubmit handleSubmit={() => handleSubmit(allIntervals)} />
+          <BtnSubmit handleSubmit={() => handleSubmitAvaiable(allIntervals)} />
+          <Button label='Ver allAvaiable' onClick={()=> console.log(allIntervals)} />
         </div>
       </div>
     </aside>
     )
   }
+
+
+  
+  const ViewUser = () => {
+
+    return(
+      <div>
+        {participants.map((user) => (
+          <div className='row'>
+            <h2>{user.username}</h2>
+            <Button label='Eliminar participante' />
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+
   const SectionCalendarys = () => {
 
     
@@ -397,7 +395,20 @@ function App() {
           </div>
         </div>
         <aside style={{flex: 1}}>
-          <p>aside</p>
+          <h2>Participantes</h2>
+
+          {(participants.length == 0) && (
+            <div className='row'>
+              <h3>No hay participantes al evento</h3>
+              <Button label='Agregar participante' />
+            </div>
+          )}
+
+          {(participants.length > 0) &&(
+            participants.map((user) => (
+              <ViewUser user={user} />
+            ))
+          )}
         </aside> 
         
 
@@ -409,7 +420,7 @@ function App() {
     
   }
 
-
+  
 
   const NoCodeSection = () => {
     const [inputCode, setInputCode] = useState<string>('');
@@ -440,7 +451,7 @@ function App() {
           <Toast ref={toast} position="top-center" />
           {(!codeExist) && (<NoCodeSection />)}
           {(codeExist) && (<SectionCalendarys />)}
-        T</div>
+        </div>
     </div>
   );
 }
