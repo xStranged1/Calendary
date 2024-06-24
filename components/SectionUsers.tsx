@@ -1,0 +1,156 @@
+import { Button } from 'primereact/button';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../utils/supabase';
+import 'primeicons/primeicons.css'; //icons
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+
+const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
+  
+  const [participants, setParticipants] = useState([])
+  const [dialogVisibility, setDialogVisibility] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
+  const [rowClick, setRowClick] = useState(true);
+
+  const ViewUser = ( {user} ) => {
+
+    return(
+      <div style={{marginTop: 10}}>
+          <Button icon='pi pi-user' className='btn-user' label={user.username} onClick={()=>handleViewUser(user)} />
+      </div>
+    )
+  }
+
+  useEffect(()=> {
+
+    const getUsers = async (code) => {
+      let { data, error } = await supabase.from('user').select('*').eq('code_event', code)
+      if (data?.length == 0){
+        return
+      }
+      if(!error){
+
+
+        let participants = data
+        for (let i = 0; i < participants.length; i++) {
+          let user = participants[i];
+          if(user.is_invited){
+            user.is_invited = 'Si'
+          }else{
+            user.is_invited = 'No'
+          }
+          if(user.avaiable){
+            user.avaiableText = 'Tiene'
+          }else{
+            user.avaiableText = 'No tiene'
+          }
+        }
+        setParticipants(participants)
+      }
+
+    }
+
+    getUsers(code)
+
+  }, [])
+
+  
+
+  if (participants.length == 0) return (
+    <div className='row'>
+        <h3>No hay participantes al evento</h3>
+        <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={()=>setDialogVisibility(true)} />
+    </div>
+    )
+
+  const FormUser = ({hide}) => {
+    const [inputUsername, setInputUsername] = useState(null)
+
+
+    const handleAddUser = async (username, e) => {
+      if(!username) return
+      const { data, error } = await supabase
+        .from('user')
+        .insert([
+          { code_event: code, username: username },
+        ])
+        .select()
+        
+        if (!error){
+          location.replace(`http://localhost:5173?code=${code}`)
+          window.scrollTo(0, 0)
+          showSuccessAddUser(username)
+          hide(e)
+          setDialogVisibility(false)
+        }
+        if(error) console.log(error);
+        
+    }
+
+
+    return(
+      <div style={{padding: 100, backgroundColor: "#ccc", border: 1, borderRadius: 5}}>
+          <label htmlFor="eventname" className="font-semibold ">
+              Nombre de usuario
+          </label>
+        <div>
+          <InputText placeholder='Nombre de usuario' value={inputUsername} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)} />
+        </div>
+
+        <div style={{flex: 1, flexDirection: 'row', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginTop: 20}}>
+          <div>
+            <Button label='Agregar' severity='success' onClick={(e)=>handleAddUser(inputUsername, e)} />
+          </div>
+          <div>
+            <Button label='Cancelar' severity='danger' onClick={(e)=>{
+              setDialogVisibility(false)
+              hide(e)
+            }} />
+          </div>
+        </div>
+          
+          
+
+      </div>
+    )
+  }
+
+  const handleViewAvaible = (event) => {
+    handleViewUser(event.data)
+  }
+
+
+  const userView = (user) => {
+    
+    return(
+      <Button icon='pi pi-user' className='btn-user' label={user.username} onClick={()=>handleViewUser(user)} />
+    )
+  }
+
+  
+    return(
+        <div className='row'>
+            <h2>Participantes</h2>
+            <Dialog
+                visible={dialogVisibility}
+                modal
+                onHide={() => {if (!dialogVisibility) return; setDialogVisibility(false); }}
+                content={({ hide }) => (<FormUser hide={hide}/>)}
+            ></Dialog>
+
+            <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
+            metaKeySelection={false}
+            onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem' }}>
+                <Column field="username" header="Nombre" body={userView}></Column>
+                <Column field="is_invited" header="Invitado"></Column>
+                <Column field="avaiableText" header="Disponibilidad"></Column>
+            </DataTable>
+
+            <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={()=>setDialogVisibility(true)} />
+
+        </div>
+    )
+}
+export default SectionUsers

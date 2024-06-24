@@ -50,3 +50,10 @@
 .ds-none {
   display: none;
 }
+
+.ds-flex {
+  display: flex;
+}
+.btn-user {
+  width: 100%;
+}

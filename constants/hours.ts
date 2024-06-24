@@ -2,7 +2,7 @@ export interface Hour {
     hour: string | null;
 }
 export const DayOfWeek = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
-export const checks = { Lun: false, Mar: false, Mie: false, Jue: false, Vie: false, Sab: false, Dom: false }
+export const defaultChecks = { Lun: true, Mar: false, Mie: false, Jue: false, Vie: false, Sab: false, Dom: false }
 export const initialIntervals = {
   'Lun': [],
   'Mar': [],
