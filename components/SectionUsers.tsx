@@ -6,6 +6,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { textDisponibilityTooltip } from '../constants/hours';
 
 const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
   
@@ -125,9 +126,36 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
   const userView = (user) => {
     
     return(
-      <Button icon='pi pi-user' className='btn-user' label={user.username} onClick={()=>handleViewUser(user)} />
+      <div className='row ds-flex bg-red'>
+        <span className="pi pi-user mr-2 flex" style={{color: "#009"}}></span>
+        <p style={{fontWeight: '500'}}>{user.username}</p>
+        <div style={{flex: 1}} />
+      </div>
     )
   }
+
+  const avaiableView = (user) => {
+
+    const color = (user.avaiable) ? '#900' : '#009'
+
+    return(
+      <div className='row ds-flex'>
+        <p style={{fontWeight: '500'}}>{user.avaiableText}</p>
+        <span className="pi pi-clock ml-2 flex" style={{color: color}}></span>
+        <div style={{flex: 1}} />
+      </div>
+
+
+    )
+  }
+
+  const headerDisponibility = () => (
+    <div className='row ds-flex'>
+      <p>Disponibilidad</p>
+      <span className="pi pi-question-circle ml-2 flex" style={{color: "#000"}}></span>
+    </div>
+  )
+
 
   
     return(
@@ -142,10 +170,10 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
 
             <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
             metaKeySelection={false}
-            onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem' }}>
+            onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
                 <Column field="username" header="Nombre" body={userView}></Column>
                 <Column field="is_invited" header="Invitado"></Column>
-                <Column field="avaiableText" header="Disponibilidad"></Column>
+                <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
             </DataTable>
 
             <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={()=>setDialogVisibility(true)} />

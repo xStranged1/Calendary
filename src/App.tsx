@@ -9,13 +9,11 @@ import './App.css';
 import { Calendar } from 'primereact/calendar';
 import { Nullable } from "primereact/ts-helpers";
 import { logDate } from '../utils/logDate'
-import { Badge } from 'primereact/badge';
 import { supabase } from '../utils/supabase'
+import { getFirstDates } from '../utils/getFirstDates'
 import { Dialog } from 'primereact/dialog';
 import { Toast, ToastMessage } from 'primereact/toast';
 import CreateEvent from '../components/CreateEvent'
-
-import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { checks, DayOfWeek, Hour, hours, initialIntervals, Interval, Intervals, Mode } from '../constants/hours'
 import BtnAdd from '../components/buttons/BtnAdd'
 import BtnDelete from '../components/buttons/BtnDelete'
@@ -23,12 +21,7 @@ import BtnSubmit from '../components/buttons/BtnSubmit'
 import WeekHours from '../components/WeekHours'
 import SectionUsers from '../components/SectionUsers'
 
-import { Checkbox } from "primereact/checkbox";
-import { isValidRange } from '../utils/isValidRange'
-import { useMountEffect } from 'primereact/hooks';
-import { Messages } from 'primereact/messages';
-import { Message } from 'primereact/message';
-
+import { useToast } from '../components/toast/toast'
 
 function App() {
 
@@ -38,8 +31,10 @@ function App() {
   const [eventName, setEventName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
-  
+
   const toast = useRef<Toast>(null);
+  const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
+  
 
   useEffect(() => {
     console.log('renderiza todo');
@@ -76,35 +71,53 @@ function App() {
     }
   }, [])
 
- 
-    const showSuccessAddUser = (name) => {
-      toast.current?.show({severity:'success', summary: `${name}`, detail:'Ha sido agregado al evento', life: 3000});
-    }
-    const showSuccess = () => {
-      toast.current?.show({severity:'success', summary: 'El evento', detail:'Ha sido creado con exito', life: 3000});
-    }
-    const showSuccessAvaiable = (username) => {
-      toast.current?.show({severity:'success', summary: `La disponibilidad de ${username}`, detail:'Ha sido guardada con exito', life: 3000});
-    }
-
-    const showCodeNotExist = (code) => {
-      toast.current?.show({severity:'error', summary: `Código inexistente`, detail: `El evento con código ${code} no existe`, life: 3000});
-    }
 
 
   const Disponibility = () => {
 
-    const [disponibility, setDisponibility] = useState<Nullable<Date>>(null);
-    window.scrollTo(0,0)
+    const [dates, setDates] = useState<Nullable<Date>>(null);
 
+    console.log(dates);
+    
+    const handleSaveEstimatedDate = async () => {
+
+      if(!dates){
+        showToast('error', 'La fecha estimativa del evento', 'No esta seleccionada')
+        return
+      }
+      
+      const firstDate = getFirstDates(dates)
+      
+      if(Date.parse(firstDate) < Date.parse(Date())){
+        showToast('error', 'La fecha estimativa del evento', 'No puede ser menor a la fecha actual')
+        return
+      }
+      
+      const { data, error } = await supabase
+        .from('event')
+        .update({estimated_date: dates})
+        .eq('code', codeURL)
+        .select()
+        console.log(data);
+        
+        if (!error){
+          showToast('success', 'La fecha estimativa del evento', 'Ha sido guardada con exito')
+        }else{
+          showToast('error', 'Hubo un error', '')
+        }
+        
+      return error
+    }
+    
     return(
       <div>
-            <h2>Fecha estimativa</h2>
+        <h2>Fecha estimativa</h2>
         <div className="card flex justify-content-center">
-            <Calendar value={disponibility}
-              onChange={(e) => setDisponibility(e.value)}
-              selectionMode='multiple' inline readOnlyInput />
+            <Calendar value={dates}
+              onChange={(e) => setDates(e.value)}
+              selectionMode='multiple' inline />
         </div>
+        <Button icon='pi pi-save' className='mt-2' label='Guardar' onClick={handleSaveEstimatedDate} />
       </div>
       
     )

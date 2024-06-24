@@ -1,6 +1,7 @@
 export interface Hour {
     hour: string | null;
 }
+export const textDisponibilityTooltip = `Amarillo: La disponibilidad no esta definida \n Azul: Tiene disponibilidad \n Rojo: No tiene disponibilidad`
 export const DayOfWeek = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
 export const defaultChecks = { Lun: true, Mar: false, Mie: false, Jue: false, Vie: false, Sab: false, Dom: false }
 export const initialIntervals = {
