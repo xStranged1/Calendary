@@ -176,7 +176,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
                 <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
             </DataTable>
 
-            <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={()=>setDialogVisibility(true)} />
+            <Button icon='pi pi-user-plus' className='mt-3' severity='success' label='Agregar participante' onClick={()=>setDialogVisibility(true)} />
 
         </div>
     )

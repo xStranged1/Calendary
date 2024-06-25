@@ -81,7 +81,7 @@ function App() {
     
     const handleSaveEstimatedDate = async () => {
 
-      if(!dates){
+      if(!dates || dates.length == 0){
         showToast('error', 'La fecha estimativa del evento', 'No esta seleccionada')
         return
       }
@@ -108,12 +108,12 @@ function App() {
         
       return error
     }
-    
+
     return(
       <div>
-        <h2>Fecha estimativa</h2>
+        <h2>Fecha estimativa del evento</h2>
         <div className="card flex justify-content-center">
-            <Calendar value={dates}
+            <Calendar value={dates} 
               onChange={(e) => setDates(e.value)}
               selectionMode='multiple' inline />
         </div>

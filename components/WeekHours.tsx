@@ -7,6 +7,7 @@ import 'primeicons/primeicons.css'; //icons
 import 'primeflex/primeflex.css'; // flex
 import '../src/App.css';
 import { handleSubmitAvaiable } from '../utils/handleSubmitAvaiable'
+import { getCheckeds } from '../utils/getCheckeds'
 
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { DayOfWeek, defaultChecks, Hour, hours, initialIntervals, Interval, Intervals, Mode } from '../constants/hours'
@@ -21,32 +22,15 @@ import { Message } from 'primereact/message';
 
 const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
 
-  const getCheckeds = (avaiable) => {
-    
-    if(avaiable){
-      let checkeds = {}
-      DayOfWeek.forEach((day) => {
-        const avaiableDay =  avaiable[day]
-        if(avaiableDay.length>0){
-          checkeds[day] = true
-        }else{
-          checkeds[day] = false
-        }
-      })
-      return checkeds
-    }
-  }
-  const avaiable = user.avaiable
+  
+  const avaiable = (user.avaiable) ? user.avaiable : initialIntervals
+
   const checks = getCheckeds(avaiable)
-  console.log("checks");
-  console.log(checks);
   
   const [checkeds, setCheckeds] = useState(checks);
   const [allIntervals, setAllIntervals] = useState<Intervals | null>(avaiable);
 
   console.log('rendeweek');
-  console.log("allIntervals");
-  // console.log(allIntervals);
   window.scrollTo(0,0)
 
   const Day = ( {day} ) => {
@@ -73,19 +57,12 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
     getIntervals = getIntervals.slice(1, getIntervals.length)
     const [intervals, setIntervals] = useState<Interval[]>(getIntervals);
 
-    const msgs = useRef<Messages>(null);
-
-
     console.log('rendeDay');
     console.log("intervals");
     console.log(intervals);
     console.log("allIntervals");
     console.log(allIntervals);
 
-    useMountEffect(() => {
-        msgs.current?.clear();
-        msgs.current?.show({ id: '1', sticky: true, severity: 'info', summary: 'Info', detail: 'Message Content', closable: false });
-    });
 
     const handleChecked = () => {
       let newChecks = checkeds
@@ -128,23 +105,27 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
       }
       let newInterval = intervals
       let objNewInterval: Interval = {
-        hourStart: selectedStartHour,
-        hourEnd: selectedEndHour
+        hourStart: null,
+        hourEnd: null
       }
 
       newInterval.push(objNewInterval)
       setIntervals(newInterval)
 
       let newAllIntervals = allIntervals
-      newAllIntervals[day] = newInterval
+      let updateInterval = newAllIntervals[day]
+      updateInterval = updateInterval.push(objNewInterval)
       setAllIntervals(newAllIntervals)
+      console.log("HandleAdd newAllIntervals");
+      console.log(newAllIntervals);
+      
       setChange(prev=>!prev)
     }
     const handleDelete = () => {
       setIntervals([])
       let newAllIntervals = allIntervals
-      allIntervals[day] = []
-      setAllIntervals(allIntervals)
+      newAllIntervals[day] = []
+      setAllIntervals(newAllIntervals)
       setSelectedStartHour(null)
       setSelectedEndHour(null)
     }
@@ -173,6 +154,12 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
         }
         if (!isValid) setInvalidRange(true)
         let newInterval = intervals
+        console.log('initialIntervals');
+        console.log(intervals);
+        console.log('oter');
+        console.log(allIntervals[day]);
+        
+        
         let objNewInterval: Interval = {
           hourStart: (isStart) ? hour : selectedIntervalStartHour,
           hourEnd: (isStart) ? selectedIntervalEndHour : hour
@@ -184,8 +171,20 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
         console.log(newInterval);
         
         let newAllIntervals = allIntervals
-        newAllIntervals[day] = newInterval
+        let firstInterval = newAllIntervals[day]
+        firstInterval = firstInterval[0]
+        console.log("firstInterval");
+        console.log(firstInterval);
+        let cloneInt = structuredClone(newInterval)
+        cloneInt.unshift(firstInterval)
+        console.log("newInterval2");
+        console.log(cloneInt);
+
+        newAllIntervals[day] = cloneInt
         setAllIntervals(newAllIntervals)
+        console.log("newAllIntervals SETED");
+        console.log(newAllIntervals);
+        
       }
       
 
@@ -252,7 +251,7 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
             </div>
           ))}
           <BtnSubmit handleSubmit={() => handleSubmitAvaiable(user, allIntervals, showSuccessAvaiable)} />
-          <Button label='Ver allAvaiable' onClick={()=> console.log(allIntervals)} />
+          {/* <Button label='Ver allAvaiable' onClick={()=> console.log(allIntervals)} />*/}
         </div>
       </div>
     </aside>
