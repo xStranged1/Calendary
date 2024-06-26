@@ -13,16 +13,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
   const [participants, setParticipants] = useState([])
   const [dialogVisibility, setDialogVisibility] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [rowClick, setRowClick] = useState(true);
 
-  const ViewUser = ( {user} ) => {
-
-    return(
-      <div style={{marginTop: 10}}>
-          <Button icon='pi pi-user' className='btn-user' label={user.username} onClick={()=>handleViewUser(user)} />
-      </div>
-    )
-  }
 
   useEffect(()=> {
 

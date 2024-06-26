@@ -12,12 +12,9 @@ import { logDate } from '../utils/logDate'
 import { supabase } from '../utils/supabase'
 import { getFirstDates } from '../utils/getFirstDates'
 import { Dialog } from 'primereact/dialog';
-import { Toast, ToastMessage } from 'primereact/toast';
+import { Toast } from 'primereact/toast';
 import CreateEvent from '../components/CreateEvent'
-import { checks, DayOfWeek, Hour, hours, initialIntervals, Interval, Intervals, Mode } from '../constants/hours'
-import BtnAdd from '../components/buttons/BtnAdd'
-import BtnDelete from '../components/buttons/BtnDelete'
-import BtnSubmit from '../components/buttons/BtnSubmit'
+import { Mode } from '../constants/hours'
 import WeekHours from '../components/WeekHours'
 import SectionUsers from '../components/SectionUsers'
 
