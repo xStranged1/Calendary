@@ -59,16 +59,21 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
 
   
 
-  if (participants.length == 0) return (
+  if (participants.length == 0 && !dialogVisibility) return (
     <div className='row'>
-        <h3>No hay participantes al evento</h3>
-        <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={()=>setDialogVisibility(true)} />
+        <h3>No hay participantes en el evento</h3>
+        <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={()=>{
+          setDialogVisibility(true)
+          console.log('algo');
+          
+        }
+          } />
     </div>
     )
 
   const FormUser = ({hide}) => {
     const [inputUsername, setInputUsername] = useState(null)
-
+    
 
     const handleAddUser = async (username, e) => {
       if(!username) return

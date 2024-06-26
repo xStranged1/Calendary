@@ -29,6 +29,8 @@ function App() {
   const [codeURL, setCodeURL] = useState();
   const [codeExist, setCodeExist] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>('');
+  const [estimatedDate, setEstimatedDate] = useState<Nullable<Date>>(null);
+  const [hostName, setHostName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
 
@@ -40,7 +42,7 @@ function App() {
     console.log('renderiza todo');
     window.scrollTo(0,0)
     
-    const getEventName = async (code) => {
+    const getEventData = async (code) => {
       let { data } = await supabase.from('event').select('*').eq('code', code)
 
       if (data?.length == 0){
@@ -51,11 +53,16 @@ function App() {
 
         const objResponse = data[0]
         const eventName = objResponse.event_name
+        const hostName = objResponse.host_name
+        const estimatedDate = objResponse.estimated_date
         const description = objResponse.description
+        setEstimatedDate(estimatedDate)
+        setHostName(hostName)
         setEventName(eventName)
         setDescription(description)
-        window.scrollTo(0, 0)
+        setEstimatedDate(estimatedDate)
         setCodeExist(true)
+        window.scrollTo(0, 0)
     }
 
     
@@ -67,17 +74,26 @@ function App() {
     const code = searchParams.get('code');
     if (code){
       setCodeURL(code)
-      getEventName(code)
+      getEventData(code)
     }
   }, [])
 
 
 
   const Disponibility = () => {
-
+    
+    useEffect(()=> {
+      let initialDates = []
+      if(estimatedDate){
+        estimatedDate.forEach(date => {
+          const objDate = new Date(date)
+          initialDates.push(objDate)
+        });
+        setDates(initialDates)
+      }
+    }, [])
     const [dates, setDates] = useState<Nullable<Date>>(null);
 
-    console.log(dates);
     
     const handleSaveEstimatedDate = async () => {
 
@@ -187,7 +203,7 @@ function App() {
           <h2>Evento: "{eventName}"</h2>
           <p>codigo: {codeURL}</p>
           {(description) && (<div style={{justifyContent: 'center', flex: 2, alignItems: 'center'}}><p className='description'>{description}</p></div>)}
-          
+          {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
         </header>
         <div className='section-main'>
         <aside style={{flex: 1}}>
