@@ -31,6 +31,7 @@ function App() {
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
 
+  const DOMAIN = 'localhost:5173/'
   const toast = useRef<Toast>(null);
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
   
@@ -190,36 +191,63 @@ function App() {
   const handleViewUser = (user) => {
     setUser(user)
   }
+
+  const Coordination = ( {participants} ) => {
+    const [dates, setDates] = useState<Nullable<Date>>(null);
+    if(participants){
+      console.log("participants");
+      console.log(participants);
+    }
+    return(
+      <div>
+        <h2>Intersección de  todas las disponibilidades</h2>
+        <h4>tect</h4>
+        <Calendar value={dates} 
+              onChange={(e) => setDates(e.value)}
+              selectionMode='multiple' inline />
+      </div>
+    )
+  }
+
   const SectionCalendarys = () => {
 
+    const [participants, getParticipants] = useState([]);
     
     return(
 
       <section>
         <header>
           <h2>Evento: "{eventName}"</h2>
-          <p>codigo: {codeURL}</p>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <div style={{marginRight: 5}}>
+                <h3>codigo: {codeURL}</h3>
+              </div>
+              <Button icon='pi pi-copy' label='Link de invitación' severity='help'  className='mt-2' 
+              onClick={() => {
+                let link = DOMAIN+`?code=${codeURL}`
+                navigator.clipboard.writeText(link)
+                showToast('success', 'Enlace copiado', 'Compártelo con los invitados!')
+              } } />
+            </div>
+            
           {(description) && (<div style={{justifyContent: 'center', flex: 2, alignItems: 'center'}}><p className='description'>{description}</p></div>)}
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
         </header>
         <div className='section-main'>
-        <aside style={{flex: 1}}>
+          <aside style={{flex: 1}}>
 
-          <SectionUsers code={codeURL} showSuccessAddUser={showSuccessAddUser} handleViewUser={handleViewUser} />
-        </aside> 
-        <div style={{flex: 3}}>
-          <h3>Disponibilidad</h3>
-          <Calendary />
-          <div style={{marginTop: 100}}>
-            <Disponibility />
+            <SectionUsers code={codeURL} showSuccessAddUser={showSuccessAddUser} handleViewUser={handleViewUser} getParticipants={getParticipants} />
+          </aside> 
+          <div style={{flex: 3}}>
+            <div style={{marginTop: 100}}>
+              <Disponibility />
+            </div>
           </div>
+          
         </div>
         
-        
-
-      </div>
-      
-
+        <div style={{marginTop: 100}} />
+        <Coordination participants={participants} />
       </section>
       )
     

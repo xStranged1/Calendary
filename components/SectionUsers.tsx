@@ -8,7 +8,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { textDisponibilityTooltip } from '../constants/hours';
 
-const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
+const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipants} ) => {
   
   const [participants, setParticipants] = useState([])
   const [dialogVisibility, setDialogVisibility] = useState(false)
@@ -40,6 +40,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser} ) => {
           }
         }
         setParticipants(participants)
+        getParticipants(participants)
       }
 
     }
