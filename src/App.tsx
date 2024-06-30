@@ -14,6 +14,7 @@ import { getFirstDates } from '../utils/getFirstDates'
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import CreateEvent from '../components/CreateEvent'
+import Coordination from '../components/Coordination'
 import { Mode } from '../constants/hours'
 import WeekHours from '../components/WeekHours'
 import SectionUsers from '../components/SectionUsers'
@@ -192,22 +193,7 @@ function App() {
     setUser(user)
   }
 
-  const Coordination = ( {participants} ) => {
-    const [dates, setDates] = useState<Nullable<Date>>(null);
-    if(participants){
-      console.log("participants");
-      console.log(participants);
-    }
-    return(
-      <div>
-        <h2>Intersección de  todas las disponibilidades</h2>
-        <h4>tect</h4>
-        <Calendar value={dates} 
-              onChange={(e) => setDates(e.value)}
-              selectionMode='multiple' inline />
-      </div>
-    )
-  }
+
 
   const SectionCalendarys = () => {
 
