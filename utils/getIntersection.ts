@@ -71,6 +71,49 @@ export const getnParticipantsAvaiables = (participants) => {
     return nParticipants
 }
 
+function stringHourToMinute(hour) {
+    const [hours, minutes] = hour.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+function minuteToStringHour(minutes) {
+    const hours = Math.floor(minutes / 60).toString().padStart(2, '0');
+    const mins = (minutes % 60).toString().padStart(2, '0');
+    return `${hours}:${mins}`;
+}
+
+const getCruce = (intervalA, intervalB) => {
+    // Convertir las horas de inicio y fin a minutos
+    const startA = stringHourToMinute(intervalA.hourStart.hour);
+    const endA = stringHourToMinute(intervalA.hourEnd.hour);
+    const startB = stringHourToMinute(intervalB.hourStart.hour);
+    const endB = stringHourToMinute(intervalB.hourEnd.hour);
+
+    // Encontrar la intersección
+    const startCruce = Math.max(startA, startB);
+    const endCruce = Math.min(endA, endB);
+
+    // Verificar si hay intersección
+    if (startCruce >= endCruce) {
+        return null;
+    }
+
+    // Convertir la intersección de vuelta a formato de horas
+    return {
+        hourStart: { hour: minuteToStringHour(startCruce) },
+        hourEnd: { hour: minuteToStringHour(endCruce) }
+    };
+};
+
+    // precond: intervalA, intervalB valids
+    // return intersection between 2 interval. ej
+    // intervalA = {hourStart: 14:00, hourEnd: 18:00}
+    // intervalB = {hourStart: 16:00, hourEnd: 19:30}
+    // expected output: {hourStart: 16:00, hourEnd: 18:00}
+    // 
+    // if no intersection
+    // expected output: null
+
 const getIntervalsDay = (intersection) => {
     let intervalsDay = []
     console.log('getIntervalsDay');
@@ -112,13 +155,20 @@ const getIntervalsDay = (intersection) => {
     }
 
      */
+    intersectionClone = structuredClone(intersection)
     
-    for (let i = 0; i < intersection.length; i++) {
-        const interval = intersection[i];
+    for (let i = 0; i < intersection.length; i++) { // intervalos de los usuarios
+        const interval = intersection[i]
         const intervalAvaiable = interval.avaiable
+        if(i == 1){
+            console.log('solo esta 2');
+            console.log(intervalAvaiable);
+            const A = intervalAvaiable[0]
+            const B = intervalAvaiable[1]
+        }
         let newMinRange, newMaxRange
 
-        for (let j = 0; j < intervalAvaiable.length; j++) {
+        for (let j = 0; j < intervalAvaiable.length; j++) { // intervalos de un usuario
             const range = intervalAvaiable[j];
             const minRange = range.hourStart
             const maxRange = range.hourEnd
@@ -158,7 +208,7 @@ export const getFiltered = (intersections, nMax) => {
                     if (intersection.length == nMax){
                         find = true
                         findWithMax = true
-                        intervals[day] = getIntervalsDay(intersection)//suma intervals ese dia
+                        intervals[day] = getIntervalsDay(intersection) //suma intervals ese dia
                         break
                     }
                     if(intersection.length < tryN){

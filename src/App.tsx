@@ -39,6 +39,7 @@ function App() {
 
   useEffect(() => {
     console.log('renderiza todo');
+
     window.scrollTo(0,0)
     
     const getEventData = async (code) => {

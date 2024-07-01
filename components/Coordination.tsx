@@ -13,7 +13,7 @@ export default function Coordination ( {participants} ) {
         console.log(participants);
         
         const intersections = getIntersection(participants)
-        
+       
         setIntersections(intersections)
         const n = getnParticipantsAvaiables(participants)
         const { intervals, nMaxIntersection } = getFiltered(intersections, n)
