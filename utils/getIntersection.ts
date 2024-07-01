@@ -115,7 +115,7 @@ const getCruce = (intervalA, intervalB) => {
     // expected output: null
 
 const getIntervalsDay = (intersection) => {
-    let intervalsDay = []
+    
     console.log('getIntervalsDay');
 
 
@@ -155,32 +155,51 @@ const getIntervalsDay = (intersection) => {
     }
 
      */
-    intersectionClone = structuredClone(intersection)
-    
+
+    let intervalsDay = []
+
+    let intersectionClone = structuredClone(intersection)
+    let newIntersection = null
+    let userHaveMoreIntervals = true
+    let continueUser = true
+
     for (let i = 0; i < intersection.length; i++) { // intervalos de los usuarios
         const interval = intersection[i]
+        const username = interval.username
+        console.log("username: "+username);
+        
         const intervalAvaiable = interval.avaiable
-        if(i == 1){
-            console.log('solo esta 2');
-            console.log(intervalAvaiable);
-            const A = intervalAvaiable[0]
-            const B = intervalAvaiable[1]
-        }
-        let newMinRange, newMaxRange
-
+        console.log('for i: '+i);
+        
         for (let j = 0; j < intervalAvaiable.length; j++) { // intervalos de un usuario
-            const range = intervalAvaiable[j];
-            const minRange = range.hourStart
-            const maxRange = range.hourEnd
+            console.log('for j: '+j);
 
-            if(!newMinRange){
-                newMinRange = minRange
-                newMaxRange = maxRange
-                continue
+            const range = intervalAvaiable[j];
+            console.log("range");
+            console.log(range);
+            if(!newIntersection){
+                newIntersection = range
+                if (j == intervalAvaiable.length) userHaveMoreIntervals = false
+                break //stop searching in the user
             }
 
+            //tengo rango del usuario anterior
+            newIntersection = getCruce(newIntersection, range)
+            if(!newIntersection){ // si no hay interseccion corta, falta la otra opcion, que haya interseccion en otro lado
+                console.log('user: '+username+'no coincide');
+                console.log(newIntersection);
+                console.log(range);
+                
+                continueUser = false
+                break
+            }
         }
+        if(!continueUser) break
+
     }
+    if(newIntersection) console.log("newIntersection: ",newIntersection);
+    
+
     return intervalsDay
 }
 
@@ -208,11 +227,11 @@ export const getFiltered = (intersections, nMax) => {
                     if (intersection.length == nMax){
                         find = true
                         findWithMax = true
-                        intervals[day] = getIntervalsDay(intersection) //suma intervals ese dia
+                        intervals[day] = getIntervalsDay(intersection) //interseccion de intervalos ese dia
                         break
                     }
                     if(intersection.length < tryN){
-                        console.log('es menor a '+nMax);
+                        //console.log('es menor a '+nMax);
                         continue
                     }
 
