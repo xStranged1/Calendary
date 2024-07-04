@@ -157,47 +157,88 @@ const getIntervalsDay = (intersection) => {
      */
 
     let intervalsDay = []
+    let checkpoints = []
+    let checkpoint = null
+    let i = 0
+    let prevInterval = null
+    let continueCheckpoints = false
 
-    let intersectionClone = structuredClone(intersection)
-    let newIntersection = null
-    let userHaveMoreIntervals = true
-    let continueUser = true
-
-    for (let i = 0; i < intersection.length; i++) { // intervalos de los usuarios
-        const interval = intersection[i]
-        const username = interval.username
-        console.log("username: "+username);
+    while (i < intersection.length || continueCheckpoints) { // users
+        let j = 0
+        if(checkpoint){ //load checkpoint
+            console.log('load checkpoint ', checkpoint);
+            i = checkpoint.i
+            j = checkpoint.j
+            prevInterval = checkpoint.interval
+            checkpoint = null
+        }
+        const user = intersection[i]
+        const username = user.username
+        const avaiable = user.avaiable
+        console.log('check user: '+username);
+        console.log("i: "+i);
         
-        const intervalAvaiable = interval.avaiable
-        console.log('for i: '+i);
-        
-        for (let j = 0; j < intervalAvaiable.length; j++) { // intervalos de un usuario
-            console.log('for j: '+j);
+        while (j < avaiable.length) { // check interval in a user
+            const currentInterval = avaiable[j]
+            console.log("j: "+j);
+            console.log('check interval: ',currentInterval);
 
-            const range = intervalAvaiable[j];
-            console.log("range");
-            console.log(range);
-            if(!newIntersection){
-                newIntersection = range
-                if (j == intervalAvaiable.length) userHaveMoreIntervals = false
-                break //stop searching in the user
-            }
-
-            //tengo rango del usuario anterior
-            newIntersection = getCruce(newIntersection, range)
-            if(!newIntersection){ // si no hay interseccion corta, falta la otra opcion, que haya interseccion en otro lado
-                console.log('user: '+username+'no coincide');
-                console.log(newIntersection);
-                console.log(range);
+            if (!prevInterval && j == avaiable.length-1) prevInterval = currentInterval
+            if (!prevInterval && j < avaiable.length-1){
+                let objCheckpoint = {}
+                objCheckpoint.i = i
+                objCheckpoint.j = j+1
+                objCheckpoint.interval = null
+                console.log('guarda checkpoint');
                 
-                continueUser = false
+                checkpoints.push(objCheckpoint)
                 break
             }
-        }
-        if(!continueUser) break
+            let cruce = getCruce(prevInterval, currentInterval)
+            if(cruce) prevInterval = cruce
+            if (!cruce){
+                console.log('no coincide con anterior: ',prevInterval);
+            }
+            if (!cruce && j == avaiable.length-1){
+                continueCheckpoints = true
+            }
+            j++
+        }//end while intervals
+        
+        if (i == intersection.length-1){ //lastUser
+            console.log('ultimo usu: '+username);
+            
+            if(prevInterval) {
+                console.log('guarda: ',prevInterval)
+                intervalsDay.push(prevInterval)
+            }
 
-    }
-    if(newIntersection) console.log("newIntersection: ",newIntersection);
+
+            console.log("checkpoints");
+            console.log(checkpoints);
+            if(checkpoints.length > 0){
+                if(checkpoints.length == 1){
+                    checkpoint = checkpoints[0]
+                    checkpoints = []
+                }else{
+                    checkpoint = checkpoints.slice(0, 1)
+                    checkpoint = checkpoint[0]
+                    checkpoints = checkpoints.slice(1, checkpoints.length)
+                }
+                continueCheckpoints = true
+            }else{
+                continueCheckpoints = false
+            }
+            
+            }
+
+        i++
+    }// end while users
+    
+    console.log("intervalsDay");
+    console.log(intervalsDay);
+    
+
     
 
     return intervalsDay
@@ -221,6 +262,11 @@ export const getFiltered = (intersections, nMax) => {
             let findWithMax = false
             while (!find) {
                 for (let tryN = nMax; tryN > 0; tryN--) {
+                    console.log("intersection["+day+"] = ");
+                    console.log("intersection["+day+"] = ");
+                    console.log("intersection["+day+"] = ");
+                    console.log("intersection["+day+"] = ");
+                    console.log("intersection["+day+"] = ");
                     console.log("intersection["+day+"] = ");
                     console.log(intersection);
 
