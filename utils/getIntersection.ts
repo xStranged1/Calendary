@@ -162,14 +162,18 @@ const getIntervalsDay = (intersection) => {
     let i = 0
     let prevInterval = null
     let continueCheckpoints = false
-
+    let totalCount = 0
     while (i < intersection.length || continueCheckpoints) { // users
+        if(totalCount > 200) {
+            console.log('exceded limit 200');
+            break
+        }
         let j = 0
         if(checkpoint){ //load checkpoint
             console.log('load checkpoint ', checkpoint);
             i = checkpoint.i
             j = checkpoint.j
-            prevInterval = checkpoint.interval
+            prevInterval = checkpoint.prevInterval
             checkpoint = null
         }
         const user = intersection[i]
@@ -179,26 +183,31 @@ const getIntervalsDay = (intersection) => {
         console.log("i: "+i);
         
         while (j < avaiable.length) { // check interval in a user
+            totalCount++
             const currentInterval = avaiable[j]
             console.log("j: "+j);
             console.log('check interval: ',currentInterval);
 
-            if (!prevInterval && j == avaiable.length-1) prevInterval = currentInterval
             if (!prevInterval && j < avaiable.length-1){
                 let objCheckpoint = {}
                 objCheckpoint.i = i
                 objCheckpoint.j = j+1
-                objCheckpoint.interval = null
+                objCheckpoint.prevInterval = null
                 console.log('guarda checkpoint');
-                
                 checkpoints.push(objCheckpoint)
-                break
             }
-            let cruce = getCruce(prevInterval, currentInterval)
-            if(cruce) prevInterval = cruce
-            if (!cruce){
-                console.log('no coincide con anterior: ',prevInterval);
+
+            let cruce
+            if (prevInterval) {
+                cruce = getCruce(prevInterval, currentInterval)
             }
+            if (cruce) {
+                console.log('cruce: ',cruce);
+                prevInterval = cruce; 
+            } 
+            
+            if (!cruce) console.log('no coincide con anterior: ',prevInterval);
+            if (!prevInterval) prevInterval = currentInterval
             if (!cruce && j == avaiable.length-1){
                 continueCheckpoints = true
             }
@@ -209,7 +218,7 @@ const getIntervalsDay = (intersection) => {
             console.log('ultimo usu: '+username);
             
             if(prevInterval) {
-                console.log('guarda: ',prevInterval)
+                console.log('se guarda en intervalsDay ',prevInterval)
                 intervalsDay.push(prevInterval)
             }
 
