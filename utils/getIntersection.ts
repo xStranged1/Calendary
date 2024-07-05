@@ -164,6 +164,7 @@ const getIntervalsDay = (intersection) => {
     let continueCheckpoints = false
     let totalCount = 0
     while (i < intersection.length || continueCheckpoints) { // users
+        let canSave = true
         if(totalCount > 200) {
             console.log('exceded limit 200');
             break
@@ -183,11 +184,14 @@ const getIntervalsDay = (intersection) => {
         console.log("i: "+i);
         
         while (j < avaiable.length) { // check interval in a user
+            canSave = true
             totalCount++
             const currentInterval = avaiable[j]
             console.log("j: "+j);
             console.log('check interval: ',currentInterval);
-
+            const copyPrevInterval = structuredClone(prevInterval)
+            console.log("copyPrevInterval: ",copyPrevInterval);
+            
             if (!prevInterval && j < avaiable.length-1){
                 let objCheckpoint = {}
                 objCheckpoint.i = i
@@ -203,10 +207,22 @@ const getIntervalsDay = (intersection) => {
             }
             if (cruce) {
                 console.log('cruce: ',cruce);
-                prevInterval = cruce; 
+                prevInterval = cruce;
+                if (j < avaiable.length-1){ //hay cruce pero faltan intervalos por checkear, capaz que pueden coincidir mas
+                    let objCheckpoint = {}
+                    objCheckpoint.i = i
+                    objCheckpoint.j = j+1
+                    objCheckpoint.prevInterval = copyPrevInterval
+                    console.log('guarda checkpoint');
+                    checkpoints.push(objCheckpoint)
+                    break
+                }
             } 
             
-            if (!cruce) console.log('no coincide con anterior: ',prevInterval);
+            if (!cruce) {
+                console.log('no coincide con anterior: ',prevInterval);
+                canSave = false
+            }
             if (!prevInterval) prevInterval = currentInterval
             if (!cruce && j == avaiable.length-1){
                 continueCheckpoints = true
@@ -217,7 +233,7 @@ const getIntervalsDay = (intersection) => {
         if (i == intersection.length-1){ //lastUser
             console.log('ultimo usu: '+username);
             
-            if(prevInterval) {
+            if(prevInterval && canSave) {
                 console.log('se guarda en intervalsDay ',prevInterval)
                 intervalsDay.push(prevInterval)
             }
