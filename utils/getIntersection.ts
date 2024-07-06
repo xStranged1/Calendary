@@ -82,6 +82,26 @@ function minuteToStringHour(minutes) {
     return `${hours}:${mins}`;
 }
 
+
+
+const remRepIntervals = (intervals) => {
+    let i = 0
+    let prevHourStart, prevHourEnd
+    while (i < intervals.length) {
+        const hourStart = intervals[i].hourStart.hour
+        const hourEnd = intervals[i].hourEnd.hour
+        if (prevHourStart == hourStart && prevHourEnd == hourEnd) {
+            intervals.splice(i, 1)
+        }else{
+            prevHourStart = hourStart
+            prevHourEnd = hourEnd
+        }
+        i++
+    }
+    
+    return intervals
+}
+
 const getCruce = (intervalA, intervalB) => {
     // Convertir las horas de inicio y fin a minutos
     const startA = stringHourToMinute(intervalA.hourStart.hour);
@@ -258,7 +278,9 @@ export const getFiltered = (intersections, nMax) => {
                     if (intersection.length == nMax){
                         find = true
                         findWithMax = true
-                        intervals[day] = getIntervalsDay(intersection) //interseccion de intervalos ese dia
+                        let intervalsDay = getIntervalsDay(intersection)
+                        const nonRepIntervals = remRepIntervals(intervalsDay)
+                        intervals[day] = nonRepIntervals //interseccion de intervalos ese dia
                         break
                     }
                     if(intersection.length < tryN){

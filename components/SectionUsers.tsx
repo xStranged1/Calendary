@@ -157,7 +157,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
   
     return(
         <div className='row'>
-            <h2>Participantes</h2>
+            <h2>Participantes: {participants.length}</h2>
             <Dialog
                 visible={dialogVisibility}
                 modal
@@ -166,6 +166,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
             ></Dialog>
 
             <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
+            paginator rows={5}
             style={{border: 1, borderWidth: 1, borderStyle: 'solid', borderColor: "#ccc"}}
             metaKeySelection={false}
             onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
