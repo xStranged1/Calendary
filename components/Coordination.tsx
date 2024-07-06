@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Calendar } from 'primereact/calendar';
 import { Nullable } from "primereact/ts-helpers";
 import { getFiltered, getIntersection, getnParticipantsAvaiables } from '../utils/getIntersection'
-import { DayOfWeek, hours } from "../constants/hours";
+import { DayOfWeek, Hour, Interval, hours } from "../constants/hours";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 

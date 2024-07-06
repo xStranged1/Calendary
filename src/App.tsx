@@ -25,10 +25,10 @@ import { useToast } from '../components/toast/toast'
 function App() {
 
   const [date, setDate] = useState<Nullable<Date>>(null);
-  const [codeURL, setCodeURL] = useState();
+  const [codeURL, setCodeURL] = useState<string>('');
   const [codeExist, setCodeExist] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>('');
-  const [estimatedDate, setEstimatedDate] = useState<Nullable<Date>>(null);
+  const [estimatedDate, setEstimatedDate] = useState<Nullable<Date[]>>(null);
   const [hostName, setHostName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
@@ -43,7 +43,7 @@ function App() {
 
     window.scrollTo(0,0)
     
-    const getEventData = async (code) => {
+    const getEventData = async (code: string) => {
       let { data } = await supabase.from('event').select('*').eq('code', code)
 
       if (data?.length == 0){

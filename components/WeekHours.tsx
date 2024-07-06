@@ -143,8 +143,8 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
         setVisible(false)
       }
 
-      const handleChangeInterval = (hour, isStart) => {
-        let isValid;
+      const handleChangeInterval = (hour: Hour, isStart: boolean) => {
+        let isValid: boolean;
         if (isStart) {
           isValid = isValidRange(hour, selectedIntervalEndHour);
           setSelectedIntervalStartHour(hour)
