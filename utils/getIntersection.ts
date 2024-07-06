@@ -116,46 +116,6 @@ const getCruce = (intervalA, intervalB) => {
 
 const getIntervalsDay = (intersection) => {
     
-    console.log('getIntervalsDay');
-
-
-    /*
-
-    {
-        id: 4,
-        username: brian,
-        avaiable: [{
-            hourStart: 11:30,
-            hourEnd: 18:30
-        },{
-            hourStart: 6:30,
-            hourEnd: 8:30
-        }]
-    }
-
-    {
-        id: 1,
-        username: Fede,
-        avaiable: [{
-            hourStart: 8:30,
-            hourEnd: 9:20
-        },{
-            hourStart: 17:20,
-            hourEnd: 22:00
-        }]
-    }
-
-    {
-        id: 2,
-        username: Wanda,
-        avaiable: [{
-            hourStart: 17:45,
-            hourEnd: 18:50
-        }}]
-    }
-
-     */
-
     let intervalsDay = []
     let checkpoints = []
     let checkpoint = null
@@ -165,8 +125,8 @@ const getIntervalsDay = (intersection) => {
     let totalCount = 0
     while (i < intersection.length || continueCheckpoints) { // users
         let canSave = true
-        if(totalCount > 200) {
-            console.log('exceded limit 200');
+        if(totalCount > 2000) {
+            console.log('exceded limit 2000');
             break
         }
         let j = 0

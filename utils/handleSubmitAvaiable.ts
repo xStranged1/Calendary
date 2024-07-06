@@ -8,6 +8,18 @@ const filteredIntervals = (allIntervals) => {
     const filteredintervals = intervals.filter(interval => (interval.hourStart && interval.hourEnd));
     filteredAllIntervals[day] = filteredintervals
   });
+
+  let isNull = true
+  for (const day in filteredAllIntervals) {
+    if (Object.prototype.hasOwnProperty.call(filteredAllIntervals, day)) {
+      const interval = filteredAllIntervals[day];
+      if (interval.length > 0){
+        isNull = false
+        break
+      }
+    }
+  }
+  if (isNull) filteredAllIntervals = null
   return filteredAllIntervals
 }
 
