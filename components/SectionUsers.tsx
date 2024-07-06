@@ -166,6 +166,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
             ></Dialog>
 
             <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
+            style={{border: 1, borderWidth: 1, borderStyle: 'solid', borderColor: "#ccc"}}
             metaKeySelection={false}
             onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
                 <Column field="username" header="Nombre" body={userView}></Column>

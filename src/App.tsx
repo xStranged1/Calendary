@@ -221,14 +221,11 @@ function App() {
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
         </header>
         <div className='section-main'>
-          <aside style={{flex: 1}}>
-
+          <div style={{alignSelf: 'flex-start'}}>
             <SectionUsers code={codeURL} showSuccessAddUser={showSuccessAddUser} handleViewUser={handleViewUser} getParticipants={getParticipants} />
-          </aside> 
-          <div style={{flex: 3}}>
-            <div style={{marginTop: 100}}>
+          </div> 
+          <div>
               <Disponibility />
-            </div>
           </div>
           
         </div>

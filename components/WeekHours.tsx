@@ -242,14 +242,15 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
     
     return(
       <aside style={{ flex: 1 }}>
-      <h2>Disponibilidad de {user.username}</h2>
-      <div className="card flex justify-content-center align-items-center">
-        <div>
+      <div className="card justify-content-center align-items-center card-week">
+        <h2>Disponibilidad de {user.username}</h2>
+        <div style={{marginTop: 40, marginBottom: 30}}>
           {DayOfWeek.map((day) => (
             <div key={day}>
               <Day day={day} />
             </div>
           ))}
+          <div style={{marginTop: 20}}></div>
           <BtnSubmit handleSubmit={() => handleSubmitAvaiable(user, allIntervals, showSuccessAvaiable)} />
           {/* <Button label='Ver allAvaiable' onClick={()=> console.log(allIntervals)} />*/}
         </div>
