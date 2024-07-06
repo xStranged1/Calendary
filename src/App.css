@@ -64,6 +64,11 @@
 .ds-flex {
   display: flex;
 }
+.divider {
+  border: #bebdbd;
+  border-width: 1px;
+  border-style: solid;
+}
 .btn-user {
   width: 100%;
 }

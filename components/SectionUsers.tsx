@@ -33,11 +33,19 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
           }else{
             user.is_invited = 'No'
           }
+
+          if(user.attendance_confirmed){
+            user.attendance_confirmed = 'Si'
+          }else{
+            user.attendance_confirmed = 'No'
+          }
+
           if(user.avaiable){
             user.avaiableText = 'Tiene'
           }else{
             user.avaiableText = 'No tiene'
           }
+
         }
         setParticipants(participants)
         getParticipants(participants)
@@ -172,6 +180,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
             onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
                 <Column field="username" header="Nombre" body={userView}></Column>
                 <Column field="is_invited" header="Invitado"></Column>
+                <Column field="attendance_confirmed" header="Asistencia confirmada"></Column>
                 <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
             </DataTable>
 

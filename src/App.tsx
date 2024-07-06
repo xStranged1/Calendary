@@ -18,6 +18,7 @@ import Coordination from '../components/Coordination'
 import { Mode } from '../constants/hours'
 import WeekHours from '../components/WeekHours'
 import SectionUsers from '../components/SectionUsers'
+import Footer from '../components/Footer'
 
 import { useToast } from '../components/toast/toast'
 
@@ -128,7 +129,7 @@ function App() {
     return(
       <div>
         <h2>Fecha estimativa del evento</h2>
-        <div className="card flex justify-content-center">
+        <div className="card justify-content-center">
             <Calendar value={dates} 
               onChange={(e) => setDates(e.value)}
               selectionMode='multiple' inline />
@@ -203,13 +204,13 @@ function App() {
     return(
 
       <section>
-        <header>
-          <h2>Evento: "{eventName}"</h2>
-            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-              <div style={{marginRight: 5}}>
-                <h3>codigo: {codeURL}</h3>
-              </div>
-              <Button icon='pi pi-copy' label='Link de invitación' severity='help'  className='mt-2' 
+        <header style={{display: 'flex', flexDirection: 'column'}}>
+          <h2>Nombre del evento: "{eventName}"</h2>
+          <h3>codigo: {codeURL}</h3>
+
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
+              
+              <Button icon='pi pi-copy' label='Link de invitación' severity='help' 
               onClick={() => {
                 let link = DOMAIN+`?code=${codeURL}`
                 navigator.clipboard.writeText(link)
@@ -217,7 +218,7 @@ function App() {
               } } />
             </div>
             
-          {(description) && (<div style={{justifyContent: 'center', flex: 2, alignItems: 'center'}}><p className='description'>{description}</p></div>)}
+          {(description) && (<div style={{justifyContent: 'center', width: "70%", alignSelf: 'center'}}><p className='description'>{description}</p></div>)}
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
         </header>
         <div className='section-main'>
@@ -275,9 +276,10 @@ function App() {
           {(!codeExist) && (<NoCodeSection />)}
           {(codeExist && !user) && (<SectionCalendarys />)}
           {(codeExist && user) && (<WeekHours user={user} codeEvent={codeURL} showSuccessAvaiable={showSuccessAvaiable} />)}
-        
+          
 
         </div>
+        <Footer />
     </div>
   );
 }
