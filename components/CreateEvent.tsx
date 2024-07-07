@@ -4,7 +4,7 @@ import { Button } from 'primereact/button';
 import React from "react";
 import { supabase } from '../utils/supabase'
 import { InputTextarea } from "primereact/inputtextarea";
-
+import { PUBLIC_URL } from "../constants/consts"
 
 
 
@@ -20,7 +20,7 @@ const handleCreate = async (hide, e, code, eventName, hostName, description, sho
     if (!error){
       showSuccess()
       hide(e)
-      location.replace(`http://localhost:5173?code=${code}`)
+      location.replace(`${PUBLIC_URL}?code=${code}`)
       window.scrollTo(0, 0)
     }
   }

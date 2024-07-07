@@ -21,6 +21,7 @@ import SectionUsers from '../components/SectionUsers'
 import Footer from '../components/Footer'
 
 import { useToast } from '../components/toast/toast'
+import { PUBLIC_URL } from '../constants/consts';
 
 function App() {
 
@@ -32,8 +33,7 @@ function App() {
   const [hostName, setHostName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
-
-  const DOMAIN = 'https://xstranged1.github.io/Calendary/'
+  
   const toast = useRef<Toast>(null);
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
   
@@ -162,7 +162,7 @@ function App() {
               
               <Button icon='pi pi-copy' label='Link de invitación' severity='help' 
               onClick={() => {
-                let link = DOMAIN+`?code=${codeURL}`
+                let link = PUBLIC_URL+`?code=${codeURL}`
                 navigator.clipboard.writeText(link)
                 showToast('success', 'Enlace copiado', 'Compártelo con los invitados!')
               } } />
