@@ -172,17 +172,20 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
                 onHide={() => {if (!dialogVisibility) return; setDialogVisibility(false); }}
                 content={({ hide }) => (<FormUser hide={hide}/>)}
             ></Dialog>
-
-            <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
-            paginator rows={5}
-            style={{border: 1, borderWidth: 1, borderStyle: 'solid', borderColor: "#ccc"}}
-            metaKeySelection={false}
-            onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
-                <Column field="username" header="Nombre" body={userView}></Column>
-                <Column field="is_invited" header="Invitado"></Column>
-                <Column field="attendance_confirmed" header="Asistencia confirmada"></Column>
-                <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
-            </DataTable>
+            <div style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
+              <div>
+              <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
+                style={{border: 1, borderWidth: 1, flex: 3, borderStyle: 'solid', borderColor: "#ccc"}}
+                paginator rows={5}
+                metaKeySelection={false}
+                onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
+                  <Column field="username" header="Nombre" body={userView}></Column>
+                  <Column field="is_invited" header="Invitado"></Column>
+                  <Column field="attendance_confirmed" header="Asistencia confirmada"></Column>
+                  <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
+              </DataTable>
+              </div>
+            </div>
 
             <Button icon='pi pi-user-plus' className='mt-3' severity='success' label='Agregar participante' onClick={()=>setDialogVisibility(true)} />
 

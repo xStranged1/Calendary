@@ -56,12 +56,11 @@ export const getIntersection = (participants) => {
             // console.log(UserAvaiableDay);
             
             if(UserAvaiableDay.length > 0){
-                let objUser: User
-                objUser.id = userP.id
-                objUser.username = userP.username
-                objUser.avaiable = UserAvaiableDay
-                // console.log("objUser");
-                // console.log(objUser);
+                let objUser: User = {
+                    id: userP.id,
+                    username: userP.username,
+                    avaiable: UserAvaiableDay
+                }
                 
                 let newIntersection = intersections[day]
                 if(!newIntersection){
@@ -189,10 +188,11 @@ const getIntervalsDay = (intersection) => {
             console.log("copyPrevInterval: ",copyPrevInterval);
             
             if (!prevInterval && j < avaiable.length-1){
-                let objCheckpoint: Checkpoint
-                objCheckpoint.i = i
-                objCheckpoint.j = j+1
-                objCheckpoint.prevInterval = null
+                let objCheckpoint: Checkpoint = {
+                    i: i,
+                    j: j+1,
+                    prevInterval: null
+                }
                 console.log('guarda checkpoint');
                 checkpoints.push(objCheckpoint)
             }
@@ -205,10 +205,11 @@ const getIntervalsDay = (intersection) => {
                 console.log('cruce: ',cruce);
                 prevInterval = cruce;
                 if (j < avaiable.length-1){ //hay cruce pero faltan intervalos por checkear, capaz que pueden coincidir mas
-                    let objCheckpoint: Checkpoint
-                    objCheckpoint.i = i
-                    objCheckpoint.j = j+1
-                    objCheckpoint.prevInterval = copyPrevInterval
+                    let objCheckpoint: Checkpoint = {
+                        i: i,
+                        j: j+1,
+                        prevInterval: copyPrevInterval
+                    }
                     console.log('guarda checkpoint');
                     checkpoints.push(objCheckpoint)
                     break

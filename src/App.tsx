@@ -33,7 +33,7 @@ function App() {
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
 
-  const DOMAIN = 'localhost:5173/'
+  const DOMAIN = 'https://xstranged1.github.io/Calendary/'
   const toast = useRef<Toast>(null);
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
   
@@ -172,10 +172,10 @@ function App() {
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
         </header>
         <div className='section-main'>
-          <div style={{alignSelf: 'flex-start'}}>
+          <div style={{alignSelf: 'flex-start', flex: 1}}>
             <SectionUsers code={codeURL} showSuccessAddUser={showSuccessAddUser} handleViewUser={handleViewUser} getParticipants={getParticipants} />
           </div> 
-          <div>
+          <div style={{flex: 1}}>
               <Disponibility />
           </div>
           
