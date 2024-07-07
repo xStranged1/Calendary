@@ -188,14 +188,15 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
       }
       
 
-      
+      const start = selectedIntervalStartHour.toString()
+      const end = selectedIntervalEndHour.toString()
       return(
         <div className={`box-day ${(!visible ? 'ds-none' : '')}`}>
-          <div><Dropdown placeholder={(selectedIntervalStartHour) ? selectedIntervalStartHour : "Desde"} value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, true)} options={hours} optionLabel="hour" 
+          <div><Dropdown placeholder={(start) ? start : "Desde"} value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, true)} options={hours} optionLabel="hour" 
               className="w-full md:w-8rem dropdown-hour"
                /></div>
             <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
-            <div><Dropdown placeholder={(selectedIntervalEndHour) ? selectedIntervalEndHour : "Hasta"} value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, false)} options={hours} optionLabel="hour" 
+            <div><Dropdown placeholder={(end) ? end : "Hasta"} value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, false)} options={hours} optionLabel="hour" 
               className="w-full md:w-8rem dropdown-hour" 
               /></div>
             <BtnDelete handleDelete={handleDeleteInterval} />

@@ -83,6 +83,9 @@ function App() {
 
   const Disponibility = () => {
     
+    
+    const [dates, setDates] = useState([]);
+
     useEffect(()=> {
       let initialDates = []
       if(estimatedDate){
@@ -93,8 +96,6 @@ function App() {
         setDates(initialDates)
       }
     }, [])
-    const [dates, setDates] = useState<Nullable<Date>>(null);
-
     
     const handleSaveEstimatedDate = async () => {
 
@@ -139,57 +140,6 @@ function App() {
       
     )
   }
-
-  const Calendary = () => {
-
-    const [dates, setDates] = useState<Nullable<Date>>(null);
-    const [time, setTime] = useState<Nullable<Date>>(null);
-    const [mode, setMode] = useState<Mode>('multiple');
-
-    useEffect(() =>{
-      console.log(dates);
-      window.scrollTo(0,0)
-      
-      logDate(dates)
-    }, [dates])
-
-    const handleChange = (date) => {
-      setDates(date)
-    }
-
-    const handleAdd = () => {
-      console.log('add');
-      
-    }
-    
-    
-    return(
-      <div>
-
-      <div style={{flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-        <div>
-          <h2>Date</h2>
-          <div className='row'>
-            <Calendar style={{minWidth: 450}} value={dates} onChange={(e) => handleChange((e.value))}
-              selectionMode={mode} dateFormat='dd/mm/yy' />
-            <Button severity='success' label="Add" onClick={handleAdd} />
-          </div>
-          
-        </div>
-          <Button style={{height: 20, marginRight: 10, marginTop: 4}} disabled={mode == 'multiple'} label="Multiselect" 
-            severity='warning' size="small" onClick= {()=>setMode('multiple')} />
-          <Button style={{height: 20}} label="Range" severity='warning' size="small"
-            disabled={mode == 'range'}  onClick= {()=>setMode('range')} />
-      </div>
-      {/* <h2>Time</h2>
-      <Calendar style={{width: 500}} value={time} onChange={(e) => setTime(e.value)} timeOnly /> */}
-      </div>
-
-    )
-  }
-
- 
-
 
   const handleViewUser = (user) => {
     setUser(user)

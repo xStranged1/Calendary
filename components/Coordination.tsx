@@ -53,8 +53,8 @@ export default function Coordination ( {participants} ) {
         hourStart=firstInterval.hourStart.hour
         hourEnd=firstInterval.hourEnd.hour
       }
-      const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>(hourStart);
-      const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>(hourEnd);
+      const [selectedStartHour, setSelectedStartHour] = useState<string | null>(hourStart);
+      const [selectedEndHour, setSelectedEndHour] = useState<string | null>(hourEnd);
   
       getIntervals = getIntervals.slice(1, getIntervals.length)
       const [intervals, setIntervals] = useState<Interval[]>(getIntervals);
@@ -65,8 +65,8 @@ export default function Coordination ( {participants} ) {
   
       const Interval = ({data, indexInterval}) => {
         
-        const [selectedIntervalStartHour, setSelectedIntervalStartHour] = useState<Hour | null>(data.hourStart.hour);
-        const [selectedIntervalEndHour, setSelectedIntervalEndHour] = useState<Hour | null>(data.hourEnd.hour);
+        const [selectedIntervalStartHour, setSelectedIntervalStartHour] = useState<string | null>(data.hourStart.hour);
+        const [selectedIntervalEndHour, setSelectedIntervalEndHour] = useState<string | null>(data.hourEnd.hour);
   
         return(
           <div key={indexInterval} className="box-day ml-5">

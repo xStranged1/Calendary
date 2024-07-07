@@ -1,5 +1,19 @@
 import { DayOfWeek, Intervals, initialIntervals } from "../constants/hours";
 
+
+interface User {
+    username: string,
+    id: string,
+    avaiable: any
+}
+
+interface Checkpoint {
+    i: number,
+    j: number,
+    prevInterval: any
+}
+
+
 export const getIntersection = (participants) => {
 
     /*
@@ -26,6 +40,8 @@ export const getIntersection = (participants) => {
     }
 
     */
+    
+    
     let intersections = {}
 
     DayOfWeek.forEach(day => {  
@@ -40,7 +56,7 @@ export const getIntersection = (participants) => {
             // console.log(UserAvaiableDay);
             
             if(UserAvaiableDay.length > 0){
-                let objUser = {}
+                let objUser: User
                 objUser.id = userP.id
                 objUser.username = userP.username
                 objUser.avaiable = UserAvaiableDay
@@ -173,7 +189,7 @@ const getIntervalsDay = (intersection) => {
             console.log("copyPrevInterval: ",copyPrevInterval);
             
             if (!prevInterval && j < avaiable.length-1){
-                let objCheckpoint = {}
+                let objCheckpoint: Checkpoint
                 objCheckpoint.i = i
                 objCheckpoint.j = j+1
                 objCheckpoint.prevInterval = null
@@ -189,7 +205,7 @@ const getIntervalsDay = (intersection) => {
                 console.log('cruce: ',cruce);
                 prevInterval = cruce;
                 if (j < avaiable.length-1){ //hay cruce pero faltan intervalos por checkear, capaz que pueden coincidir mas
-                    let objCheckpoint = {}
+                    let objCheckpoint: Checkpoint
                     objCheckpoint.i = i
                     objCheckpoint.j = j+1
                     objCheckpoint.prevInterval = copyPrevInterval

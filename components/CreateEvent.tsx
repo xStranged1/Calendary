@@ -51,20 +51,20 @@ function CreateEvent( {hide, showSuccess, setCodeURL} ) {
               <label htmlFor="eventname" className="text-primary-50 font-semibold">
                   Nombre evento
               </label>
-              <InputText id="eventname" label="eventname" value={eventName} onChange={(e) => setEventName((e.target.value))} ></InputText>
+              <InputText id="eventname" value={eventName} onChange={(e) => setEventName((e.target.value))} ></InputText>
           </div>
           <div className="inline-flex flex-column gap-2">
               <label htmlFor="hostname" className="text-primary-50 font-semibold">
                   Anfitrión
               </label>
-              <InputText id="hostname" label="hostname" value={hostName} onChange={(e) => setHostName((e.target.value))} ></InputText>
+              <InputText id="hostname" value={hostName} onChange={(e) => setHostName((e.target.value))} ></InputText>
           </div>
           <div className="inline-flex flex-column gap-2">
               <label htmlFor="code" className="text-primary-50 font-semibold">
                   Código
               </label>
             <div className="inline-flex flex-row gap-2">
-              <InputText id="code" label="code" value={code} onChange={(e) => setCode((e.target.value))} ></InputText>
+              <InputText id="code" value={code} onChange={(e) => setCode((e.target.value))} ></InputText>
               <Button icon="pi pi-sync" severity="info" onClick={() => generateRandomCode(11)} />
             </div>
           </div>
