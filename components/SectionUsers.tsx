@@ -139,6 +139,17 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
     )
   }
 
+  const attendanceView = (user) => {
+    const confirmed = user.attendance_confirmed
+    const severity = (!confirmed) ? 'danger' : 'success'
+    const label = 'Confirmar'
+    return(
+      <div className='row ds-flex'>
+        <Button label={label} size='small' severity={severity} />
+        <div style={{flex: 1}} />
+      </div>
+    )
+  }
   const avaiableView = (user) => {
 
     const color = (user.avaiable) ? '#900' : '#009'
@@ -181,7 +192,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
                 onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
                   <Column field="username" header="Nombre" body={userView}></Column>
                   <Column field="is_invited" header="Invitado"></Column>
-                  <Column field="attendance_confirmed" header="Asistencia confirmada"></Column>
+                  <Column field="attendance_confirmed" body={attendanceView} header="Asistencia confirmada"></Column>
                   <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
               </DataTable>
               </div>

@@ -8,24 +8,23 @@ import 'primeflex/primeflex.css'; // flex
 import './App.css';
 import { Calendar } from 'primereact/calendar';
 import { Nullable } from "primereact/ts-helpers";
-import { logDate } from '../utils/logDate'
 import { supabase } from '../utils/supabase'
 import { getFirstDates } from '../utils/getFirstDates'
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import CreateEvent from '../components/CreateEvent'
 import Coordination from '../components/Coordination'
-import { Mode } from '../constants/hours'
 import WeekHours from '../components/WeekHours'
 import SectionUsers from '../components/SectionUsers'
 import Footer from '../components/Footer'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 import { useToast } from '../components/toast/toast'
 import { PUBLIC_URL } from '../constants/consts';
 
 function App() {
 
-  const [date, setDate] = useState<Nullable<Date>>(null);
   const [codeURL, setCodeURL] = useState<string>('');
   const [codeExist, setCodeExist] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>('');
@@ -33,10 +32,27 @@ function App() {
   const [hostName, setHostName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
-  
   const toast = useRef<Toast>(null);
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
   
+
+  const [session, setSession] = useState(null)
+
+    useEffect(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session)
+      })
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session)
+      })
+
+      return () => subscription.unsubscribe()
+    }, [])
+
+    
 
   useEffect(() => {
     console.log('renderiza todo');
@@ -156,8 +172,6 @@ function App() {
       <section>
         <header style={{display: 'flex', flexDirection: 'column'}}>
           <h2>Nombre del evento: "{eventName}"</h2>
-          <h3>codigo: {codeURL}</h3>
-
             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
               
               <Button icon='pi pi-copy' label='Link de invitación' severity='help' 
@@ -167,9 +181,15 @@ function App() {
                 showToast('success', 'Enlace copiado', 'Compártelo con los invitados!')
               } } />
             </div>
-            
           {(description) && (<div style={{justifyContent: 'center', width: "70%", alignSelf: 'center'}}><p className='description'>{description}</p></div>)}
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
+
+          {(!session) && <Button icon='pi pi-user' label='Google' onClick={()=> {
+            supabase.auth.signInWithOAuth({
+              provider: 'google',
+            })
+          }} />}
+
         </header>
         <div className='section-main'>
           <div style={{alignSelf: 'flex-start', flex: 1}}>
