@@ -41,6 +41,9 @@ function App() {
     useEffect(() => {
       supabase.auth.getSession().then(({ data: { session } }) => {
         setSession(session)
+        console.log("session useEffect");
+        console.log(session);
+        
       })
 
       const {
@@ -56,7 +59,8 @@ function App() {
 
   useEffect(() => {
     console.log('renderiza todo');
-
+    console.log(session);
+    
     window.scrollTo(0,0)
     
     const getEventData = async (code: string) => {
@@ -187,8 +191,13 @@ function App() {
           {(!session) && <Button icon='pi pi-user' label='Google' onClick={()=> {
             supabase.auth.signInWithOAuth({
               provider: 'google',
+              options: {
+                redirectTo: PUBLIC_URL+"?code="+codeURL
+              }
             })
           }} />}
+
+        <Button onClick={()=>console.log(session)} label='ver ses' />
 
         </header>
         <div className='section-main'>
