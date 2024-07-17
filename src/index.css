@@ -36,8 +36,12 @@ h1 {
   line-height: 1.1;
 }
 
+:root {
+  color: #1b2b3a;
+  background-color: #ffffff;
+}
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
     color: #1b2b3a;
     background-color: #ffffff;

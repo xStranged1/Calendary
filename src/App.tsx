@@ -17,8 +17,6 @@ import Coordination from '../components/Coordination'
 import WeekHours from '../components/WeekHours'
 import SectionUsers from '../components/SectionUsers'
 import Footer from '../components/Footer'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 import { useToast } from '../components/toast/toast'
 import { PUBLIC_URL } from '../constants/consts';
@@ -192,7 +190,7 @@ function App() {
             supabase.auth.signInWithOAuth({
               provider: 'google',
               options: {
-                redirectTo: PUBLIC_URL+"?code="+codeURL
+                redirectTo: 'http://localhost:5173/Calendary'+"?code="+codeURL
               }
             })
           }} />}
