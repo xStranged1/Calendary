@@ -186,7 +186,7 @@ function App() {
           {(description) && (<div style={{justifyContent: 'center', width: "70%", alignSelf: 'center'}}><p className='description'>{description}</p></div>)}
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
 
-          {(!session) && <Button icon='pi pi-user' label='Google' onClick={()=> {
+          {(!session) && <Button style={{width: 250}} icon='pi pi-google' size='small' label='Iniciar sesión con Google' onClick={()=> {
             supabase.auth.signInWithOAuth({
               provider: 'google',
               options: {
@@ -198,14 +198,13 @@ function App() {
         <Button onClick={()=>console.log(session)} label='ver ses' />
 
         </header>
-        <div className='section-main'>
+        <div className='section-main' style={{flexWrap: 'wrap'}}>
           <div style={{alignSelf: 'flex-start', flex: 1}}>
-            <SectionUsers code={codeURL} showSuccessAddUser={showSuccessAddUser} handleViewUser={handleViewUser} getParticipants={getParticipants} />
+            <SectionUsers session={session} eventName={eventName} code={codeURL} handleViewUser={handleViewUser} getParticipants={getParticipants} />
           </div> 
           <div style={{flex: 1}}>
-              <Disponibility />
+            <Disponibility />
           </div>
-          
         </div>
         
         <div style={{marginTop: 100}} />
