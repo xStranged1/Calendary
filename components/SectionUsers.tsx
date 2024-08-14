@@ -8,18 +8,16 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { textDisponibilityTooltip } from '../constants/hours';
 import { User } from '../constants/user'
-import DialogConfirm from '../components/dialog/DialogConfirm'
 import { useToast } from './toast/toast';
-import { Toast } from 'primereact/toast';
 
-const SectionUsers = ( {session, code, eventName, handleViewUser, getParticipants} ) => {
+const SectionUsers = ( {session, code, eventName, handleViewUser, getParticipants, toast} ) => {
   
   const [participants, setParticipants] = useState([])
   const [dialogVisibility, setDialogVisibility] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
   const [dialogConfirmVisibility, setDialogConfirmVisibility] = useState<boolean>(false);
   const [confirmedUser, setConfirmedUser] = useState(null)
-  const toast = useRef<Toast>(null);
+
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
   
   useEffect(()=> {
@@ -146,26 +144,62 @@ const SectionUsers = ( {session, code, eventName, handleViewUser, getParticipant
     )
   }
   
-const confirmAttendance = async () => {
-  setDialogConfirmVisibility(false)
 
-  const { data, error } = await supabase
-        .from('user')
-        .update({attendance_confirmed: true})
-        .eq('code_event', code)
-        .eq('username', confirmedUser)
-        .select()
-        console.log(data);
-        
-        if (!error){
-          showToast('success', 'La asistencia', 'Ha sido confirmada con exito')
-        }else{
-          showToast('error', 'Hubo un error', '')
-          console.log(error);
+  const isAlreadyConfirmed = async (id) => {
+    const { data, error } = await supabase
+          .from('user')
+          .select()
+          .eq('code_event', code)
+          .eq('id_google', id)
+          if (error){
+            showToast('error', 'Hubo un error', '')
+            console.log(error);
+            return
+          }
+    const isConfirmed = (data.length == 0) ? false : true
+    return isConfirmed
+  }
+
+  const handleConfirmAttendance = async () => {
+    
+    console.log(session);
+    const id = session.user.id
+    
+    if(await isAlreadyConfirmed(id)) return showToast('error', 'Hay un problema', 'Esta cuenta de google ya confirmo la asistencia de otro invitado')
+
+    const { data, error } = await supabase
+          .from('user')
+          .update({id_google: id})
+          .eq('code_event', code)
+          .eq('username', confirmedUser)
+          .select()
+          if (error){
+            showToast('error', 'Hubo un error', '')
+            console.log(error);
+            return
+          }
+
+    await confirmAttendance()
+  }
+
+  const confirmAttendance = async () => {
+    setDialogConfirmVisibility(false)
+
+    const { data, error } = await supabase
+          .from('user')
+          .update({attendance_confirmed: true})
+          .eq('code_event', code)
+          .eq('username', confirmedUser)
+          .select()
+          console.log(data);
           
-        }
-
-}
+          if (!error){
+            showToast('success', 'La asistencia', 'Ha sido confirmada con exito')
+          }else{
+            showToast('error', 'Hubo un error', '')
+            console.log(error);
+          }
+  }
 
 const headerElement = (
   <div className="inline-flex align-items-center justify-content-center gap-2">
@@ -174,7 +208,7 @@ const headerElement = (
 );
 const footerContent = (
     <div>
-        <Button label="Confirmar asistencia" icon="pi pi-check" onClick={confirmAttendance} autoFocus />
+        <Button label="Confirmar asistencia" icon="pi pi-check" onClick={handleConfirmAttendance} autoFocus />
     </div>
 );
   const DialogConfirm = () => {
@@ -183,7 +217,9 @@ const footerContent = (
       <div className="card flex justify-content-center">
           <Dialog visible={dialogConfirmVisibility} modal header={headerElement} footer={footerContent} style={{ width: '50rem' }} onHide={() => {if (!dialogConfirmVisibility) return; setDialogConfirmVisibility(false); }}>
               <p className="m-0">
-                Se confirmará la asistencia al evento {eventName} y los demás invitados podrán verlo
+                Se confirmará la asistencia de
+              <span style={{fontVariant: '600'}}> {confirmedUser}</span>
+              <span> al evento "{eventName}" y los demás invitados podrán verlo</span>
               </p>
           </Dialog>
       </div>
@@ -216,7 +252,7 @@ const footerContent = (
 
     return(
       <div className='row ds-flex'>
-        <Button label={label} size='small' disabled={!confirmed} severity={severity} onClick={()=>handleConfirm(username)} />
+        <Button label={label} size='small' disabled={!enabled} severity={severity} onClick={()=>handleConfirm(username)} />
         <div style={{flex: 1}} />
       </div>
     )

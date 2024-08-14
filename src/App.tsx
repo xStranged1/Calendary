@@ -195,12 +195,10 @@ function App() {
             })
           }} />}
 
-        <Button onClick={()=>console.log(session)} label='ver ses' />
-
         </header>
         <div className='section-main' style={{flexWrap: 'wrap'}}>
           <div style={{alignSelf: 'flex-start', flex: 1}}>
-            <SectionUsers session={session} eventName={eventName} code={codeURL} handleViewUser={handleViewUser} getParticipants={getParticipants} />
+            <SectionUsers session={session} eventName={eventName} code={codeURL} handleViewUser={handleViewUser} getParticipants={getParticipants} toast={toast} />
           </div> 
           <div style={{flex: 1}}>
             <Disponibility />
