@@ -102,12 +102,12 @@ const SectionUsers = ( {session, code, eventName, handleViewUser, getParticipant
 
 
     return(
-      <div style={{padding: 100, backgroundColor: "#ccc", border: 1, borderRadius: 5}}>
+      <div style={{padding: 100, backgroundColor: "#fefefe", border: 1, borderRadius: 5}}>
           <label htmlFor="eventname" className="font-semibold ">
-              Nombre de usuario
+              Participante
           </label>
         <div>
-          <InputText placeholder='Nombre de usuario' value={inputUsername} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)} />
+          <InputText placeholder='Nombre del participante' value={inputUsername} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)} />
         </div>
 
         <div style={{flex: 1, flexDirection: 'row', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginTop: 20}}>

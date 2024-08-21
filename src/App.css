@@ -3,8 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  background-color: #eeeeee;
-  color: #1b2b3a;
+  background-color: #fefefe;
 }
 
 .calendar {
@@ -72,4 +71,32 @@
 }
 .btn-user {
   width: 100%;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #1b2b3a;
+    background-color: #fefefe;
+  }
+  body {
+    background-color: #fefefe;
+
+  }
+  a:hover {
+    color: #747bff;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #fefefe;
+    background-color: #1b2b3a;
+  }
+  body {
+    background-color: #1b2b3a;
+    color: #fefefe;
+  }
+  a:hover {
+    color: #747bff;
+  }
 }
