@@ -1,9 +1,20 @@
-#root {
+:root {
+  background-color: #fefefe;
+  --bg-modal: #fefefe;
+  --text-color: #1b2b3a;
+  --bg-navbar: rgba(210, 233, 255, 0.6);
+}
+
+body {
   max-width: 1280px;
   margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
   padding: 2rem;
   text-align: center;
-  background-color: #eeeeee;
+}
+a:hover {
+  color: #747bff;
 }
 
 .calendar {
@@ -11,7 +22,7 @@
 }
 
 .card-week {
-  background-color: #ddd;
+  background-color: #fde7bd;
   border: 1px;
   border-width: 1px;
   border-style: solid;
@@ -71,4 +82,63 @@
 }
 .btn-user {
   width: 100%;
+}
+
+.modal-add-user {
+  padding: 80px;
+  border: 1px;
+  border-radius: 10px;
+  background-color: var(--bg-modal);
+  color: var(--text-color) 
+}
+
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rem;
+  backdrop-filter: blur(10px);
+  background-color: var(--bg-navbar);
+  z-index: 1000;
+
+}
+
+.footer {
+  position: absolute;
+  bottom: 0 auto;
+  left: 0;
+  right: 0;
+  height: 6rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--bg-navbar);
+  backdrop-filter: blur(10px);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #fefefe;
+    background-color: #101b28;
+    --bg-modal: #1b2b3a;
+    --text-color: #fefefe;
+    --bg-navbar: rgba(27, 43, 58, 0.6);
+  }
+  a:hover {
+    color: #747bff;
+  }
+  .card-week {
+    background-color: #242424;
+    border: 1px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #191919;
+    border-radius: 30px;
+    padding: 30px;
+  }
+
+
+
+  
+  
 }

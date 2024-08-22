@@ -1,5 +1,5 @@
 import { Button } from 'primereact/button';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '../utils/supabase';
 import 'primeicons/primeicons.css'; //icons
 import { Dialog } from 'primereact/dialog';
@@ -7,14 +7,19 @@ import { InputText } from 'primereact/inputtext';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { textDisponibilityTooltip } from '../constants/hours';
+import { User } from '../constants/user'
+import { useToast } from './toast/toast';
 
-const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipants} ) => {
+const SectionUsers = ( {session, code, eventName, handleViewUser, getParticipants, toast} ) => {
   
   const [participants, setParticipants] = useState([])
   const [dialogVisibility, setDialogVisibility] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
+  const [dialogConfirmVisibility, setDialogConfirmVisibility] = useState<boolean>(false);
+  const [confirmedUser, setConfirmedUser] = useState(null)
 
-
+  const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
+  
   useEffect(()=> {
 
     const getUsers = async (code) => {
@@ -27,7 +32,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
 
         let participants = data
         for (let i = 0; i < participants.length; i++) {
-          let user = participants[i];
+          let user: User = participants[i];
           if(user.is_invited){
             user.is_invited = 'Si'
           }else{
@@ -97,23 +102,25 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
 
 
     return(
-      <div style={{padding: 100, backgroundColor: "#ccc", border: 1, borderRadius: 5}}>
-          <label htmlFor="eventname" className="font-semibold ">
-              Nombre de usuario
+      <div className='modal-add-user'>
+          <label htmlFor="eventname" className="font-semibold" style={{float: 'left', marginBottom: 5, fontFamily: 'Poppins'}}>
+              Participante
           </label>
-        <div>
-          <InputText placeholder='Nombre de usuario' value={inputUsername} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)} />
+        <div style={{marginTop: 5}}>
+          <InputText placeholder='Nombre del participante' value={inputUsername} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)} 
+            style={{fontFamily: 'Poppins'}}/>
         </div>
 
-        <div style={{flex: 1, flexDirection: 'row', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginTop: 20}}>
-          <div>
-            <Button label='Agregar' severity='success' onClick={(e)=>handleAddUser(inputUsername, e)} />
-          </div>
+        <div style={{flex: 1, flexDirection: 'row', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginTop: 20}}>
           <div>
             <Button label='Cancelar' severity='danger' onClick={(e)=>{
               setDialogVisibility(false)
               hide(e)
             }} />
+          </div>
+          <div>
+            <Button label='Agregar' severity='success' onClick={(e)=>handleAddUser(inputUsername, e)} />
           </div>
         </div>
           
@@ -138,7 +145,120 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
       </div>
     )
   }
+  
 
+  const isAlreadyConfirmed = async (id) => {
+    const { data, error } = await supabase
+          .from('user')
+          .select()
+          .eq('code_event', code)
+          .eq('id_google', id)
+          if (error){
+            showToast('error', 'Hubo un error', '')
+            console.log(error);
+            return
+          }
+    const isConfirmed = (data.length == 0) ? false : true
+    return isConfirmed
+  }
+
+  const handleConfirmAttendance = async () => {
+    
+    console.log(session);
+    const id = session.user.id
+    
+    if(await isAlreadyConfirmed(id)) return showToast('error', 'Hay un problema', 'Esta cuenta de google ya confirmo la asistencia de otro invitado')
+
+    const { data, error } = await supabase
+          .from('user')
+          .update({id_google: id})
+          .eq('code_event', code)
+          .eq('username', confirmedUser)
+          .select()
+          if (error){
+            showToast('error', 'Hubo un error', '')
+            console.log(error);
+            return
+          }
+
+    await confirmAttendance()
+  }
+
+  const confirmAttendance = async () => {
+    setDialogConfirmVisibility(false)
+
+    const { data, error } = await supabase
+          .from('user')
+          .update({attendance_confirmed: true})
+          .eq('code_event', code)
+          .eq('username', confirmedUser)
+          .select()
+          console.log(data);
+          
+          if (!error){
+            showToast('success', 'La asistencia', 'Ha sido confirmada con exito')
+          }else{
+            showToast('error', 'Hubo un error', '')
+            console.log(error);
+          }
+  }
+
+const headerElement = (
+  <div className="inline-flex align-items-center justify-content-center gap-2">
+      <span className="font-bold white-space-nowrap">{confirmedUser}</span>
+  </div>
+);
+const footerContent = (
+    <div>
+        <Button label="Confirmar asistencia" icon="pi pi-check" onClick={handleConfirmAttendance} autoFocus />
+    </div>
+);
+  const DialogConfirm = () => {
+
+    return(
+      <div className="card flex justify-content-center">
+          <Dialog visible={dialogConfirmVisibility} modal header={headerElement} footer={footerContent} style={{ width: '50rem' }} onHide={() => {if (!dialogConfirmVisibility) return; setDialogConfirmVisibility(false); }}>
+              <p className="m-0">
+                Se confirmará la asistencia de
+              <span style={{fontVariant: '600'}}> {confirmedUser}</span>
+              <span> al evento "{eventName}" y los demás invitados podrán verlo</span>
+              </p>
+          </Dialog>
+      </div>
+    )
+  }
+
+  const handleConfirm = (username) => {
+    if(!session){
+      console.log('notiene session');
+    }else{
+      const email = session.user.email
+      setConfirmedUser(username)
+      setDialogConfirmVisibility(true)
+    }
+  }
+
+  const attendanceView = (user: User) => {
+    const confirmed = user.attendance_confirmed
+    const username = user.username
+    let severity, label, enabled
+    if(confirmed == 'No'){
+      severity = 'secondary'
+      label = 'Confirmar'
+      enabled = true
+    }else{
+      severity = 'success'
+      label = 'Confirmado'
+      enabled = false
+    }
+
+    return(
+      <div className='row ds-flex'>
+        <Button label={label} size='small' disabled={!enabled} severity={severity} onClick={()=>handleConfirm(username)} />
+        <div style={{flex: 1}} />
+      </div>
+    )
+  }
   const avaiableView = (user) => {
 
     const color = (user.avaiable) ? '#900' : '#009'
@@ -172,6 +292,9 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
                 onHide={() => {if (!dialogVisibility) return; setDialogVisibility(false); }}
                 content={({ hide }) => (<FormUser hide={hide}/>)}
             ></Dialog>
+
+          <DialogConfirm />
+
             <div style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
               <div>
               <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
@@ -181,7 +304,7 @@ const SectionUsers = ( {code, showSuccessAddUser, handleViewUser, getParticipant
                 onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
                   <Column field="username" header="Nombre" body={userView}></Column>
                   <Column field="is_invited" header="Invitado"></Column>
-                  <Column field="attendance_confirmed" header="Asistencia confirmada"></Column>
+                  <Column field="attendance_confirmed" body={attendanceView} header="Asistencia confirmada"></Column>
                   <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
               </DataTable>
               </div>

@@ -8,14 +8,12 @@ import 'primeflex/primeflex.css'; // flex
 import './App.css';
 import { Calendar } from 'primereact/calendar';
 import { Nullable } from "primereact/ts-helpers";
-import { logDate } from '../utils/logDate'
 import { supabase } from '../utils/supabase'
 import { getFirstDates } from '../utils/getFirstDates'
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import CreateEvent from '../components/CreateEvent'
 import Coordination from '../components/Coordination'
-import { Mode } from '../constants/hours'
 import WeekHours from '../components/WeekHours'
 import SectionUsers from '../components/SectionUsers'
 import Footer from '../components/Footer'
@@ -25,7 +23,6 @@ import { PUBLIC_URL } from '../constants/consts';
 
 function App() {
 
-  const [date, setDate] = useState<Nullable<Date>>(null);
   const [codeURL, setCodeURL] = useState<string>('');
   const [codeExist, setCodeExist] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>('');
@@ -33,14 +30,34 @@ function App() {
   const [hostName, setHostName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [user, setUser] = useState(null)
-  
   const toast = useRef<Toast>(null);
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
   
 
+  const [session, setSession] = useState(null)
+
+    useEffect(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session)
+        console.log("session useEffect");
+        console.log(session);
+      })
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session)
+      })
+
+      return () => subscription.unsubscribe()
+    }, [])
+
+    
+
   useEffect(() => {
     console.log('renderiza todo');
-
+    console.log(session);
+    
     window.scrollTo(0,0)
     
     const getEventData = async (code: string) => {
@@ -156,8 +173,6 @@ function App() {
       <section>
         <header style={{display: 'flex', flexDirection: 'column'}}>
           <h2>Nombre del evento: "{eventName}"</h2>
-          <h3>codigo: {codeURL}</h3>
-
             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
               
               <Button icon='pi pi-copy' label='Link de invitación' severity='help' 
@@ -167,18 +182,19 @@ function App() {
                 showToast('success', 'Enlace copiado', 'Compártelo con los invitados!')
               } } />
             </div>
-            
           {(description) && (<div style={{justifyContent: 'center', width: "70%", alignSelf: 'center'}}><p className='description'>{description}</p></div>)}
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
+
+          
+
         </header>
-        <div className='section-main'>
+        <div className='section-main' style={{flexWrap: 'wrap'}}>
           <div style={{alignSelf: 'flex-start', flex: 1}}>
-            <SectionUsers code={codeURL} showSuccessAddUser={showSuccessAddUser} handleViewUser={handleViewUser} getParticipants={getParticipants} />
+            <SectionUsers session={session} eventName={eventName} code={codeURL} handleViewUser={handleViewUser} getParticipants={getParticipants} toast={toast} />
           </div> 
           <div style={{flex: 1}}>
-              <Disponibility />
+            <Disponibility />
           </div>
-          
         </div>
         
         <div style={{marginTop: 100}} />
@@ -189,6 +205,57 @@ function App() {
   }
 
   
+
+  const ArrowLeft = () => {
+
+    return(
+      <div>
+        <Button icon='pi pi-arrow-left' onClick={()=> {
+          window.scrollTo(0,0)
+          setUser(null)
+          }} 
+        />
+      </div>
+      
+    )
+  }
+
+
+  const BtnSignIn = () => {
+    
+    return(
+      <Button style={{width: 250}} icon='pi pi-google' size='small' label='Iniciar sesión con Google' onClick={()=> {
+      supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'http://localhost:5173/Calendary'+"?code="+codeURL
+        }
+      })
+    }} />
+    )
+  }
+
+  const Navbar = () => {
+
+    return(
+      <div className='navbar' style={{flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{marginLeft: 120, display: 'flex', gap: 50,alignItems: 'center'}}>
+          {(user) && (<ArrowLeft />)}
+          <h2>Calendary</h2>
+        </div>
+      
+        <div style={{marginRight: 30}}>
+          {(!session) && (<BtnSignIn />)}
+          {(session) && (
+            <div>
+              <h3>Logeado como {session.user.user_metadata.name}!</h3>
+            </div>
+          )}
+        </div>
+        
+      </div>
+    )
+  }
 
   const NoCodeSection = () => {
     const [inputCode, setInputCode] = useState<string>('');
@@ -214,22 +281,20 @@ function App() {
   return (
       
     <div>
+      <Navbar />
+      <div style={{paddingTop: "4rem"}} />
         <div className="card justify-content-center">
           <div className='row ds-flex gap-5'>
-            {(user) && (<Button icon='pi pi-arrow-left' onClick={()=> {
-              window.scrollTo(0,0)
-              setUser(null)
-            }} />)}
+            {(user) && (<ArrowLeft />)}
             <h1>Calendary</h1>
           </div>
           <Toast ref={toast} position="top-center" />
           {(!codeExist) && (<NoCodeSection />)}
           {(codeExist && !user) && (<SectionCalendarys />)}
           {(codeExist && user) && (<WeekHours user={user} codeEvent={codeURL} showSuccessAvaiable={showSuccessAvaiable} />)}
-          
-
         </div>
-        <Footer />
+      <div style={{marginTop: "4rem"}} />
+      <Footer />
     </div>
   );
 }
