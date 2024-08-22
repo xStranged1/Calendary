@@ -6,7 +6,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { textDisponibilityTooltip } from '../constants/hours';
+import { textAttendanceTooltip, textDisponibilityTooltip } from '../constants/hours';
 import { User } from '../constants/user'
 import { useToast } from './toast/toast';
 
@@ -167,7 +167,7 @@ const SectionUsers = ( {session, code, eventName, handleViewUser, getParticipant
     console.log(session);
     const id = session.user.id
     
-    if(await isAlreadyConfirmed(id)) return showToast('error', 'Hay un problema', 'Esta cuenta de google ya confirmo la asistencia de otro invitado')
+    if(await isAlreadyConfirmed(id)) return showToast('error', 'Hay un problema', 'Esta cuenta de Google ya confirmo la asistencia de otro invitado')
 
     const { data, error } = await supabase
           .from('user')
@@ -266,20 +266,20 @@ const footerContent = (
     return(
       <div className='row ds-flex'>
         <p style={{fontWeight: '500'}}>{user.avaiableText}</p>
-        <span className="pi pi-clock ml-2 flex" style={{color: color}}></span>
-        <div style={{flex: 1}} />
       </div>
 
 
     )
   }
 
-  const headerDisponibility = () => (
+
+  const headerAttendance = () => (
     <div className='row ds-flex'>
-      <p>Disponibilidad</p>
+      <p>Asistencia confirmada</p>
       <span className="pi pi-question-circle ml-2 flex" style={{color: "#000"}}></span>
     </div>
   )
+  
 
 
   
@@ -295,17 +295,17 @@ const footerContent = (
 
           <DialogConfirm />
 
-            <div style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
+            <div className='data-table'>
               <div>
               <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
-                style={{border: 1, borderWidth: 1, flex: 3, borderStyle: 'solid', borderColor: "#ccc"}}
+                style={{ borderWidth: 1, flex: 3, borderStyle: 'solid', borderColor: "#ccc"}}
                 paginator rows={5}
                 metaKeySelection={false}
                 onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
                   <Column field="username" header="Nombre" body={userView}></Column>
                   <Column field="is_invited" header="Invitado"></Column>
-                  <Column field="attendance_confirmed" body={attendanceView} header="Asistencia confirmada"></Column>
-                  <Column field="avaiableText" header={headerDisponibility} headerTooltip={textDisponibilityTooltip} body={avaiableView}></Column>
+                  <Column field="attendance_confirmed" body={attendanceView} headerTooltip={textAttendanceTooltip} header={headerAttendance}></Column>
+                  <Column field="avaiableText" header='Disponibilidad' body={avaiableView}></Column>
               </DataTable>
               </div>
             </div>

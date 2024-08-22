@@ -2,6 +2,7 @@ export interface Hour {
     hour: string | null;
 }
 export const textDisponibilityTooltip = `Amarillo: La disponibilidad no esta definida \n Azul: Tiene disponibilidad \n Rojo: No tiene disponibilidad`
+export const textAttendanceTooltip = `Confirma tu asistencia iniciando sesión con Google! \n Solo se puede confirmar asistencia una vez`
 export const DayOfWeek = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
 export const defaultChecks = { Lun: false, Mar: false, Mie: false, Jue: false, Vie: false, Sab: false, Dom: false }
 export const initialIntervals = {
