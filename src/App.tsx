@@ -172,7 +172,7 @@ function App() {
 
       <section>
         <header style={{display: 'flex', flexDirection: 'column'}}>
-          <h2>Nombre del evento: "{eventName}"</h2>
+          <h1>Evento: "{eventName}"</h1>
             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 5}}>
               
               <Button icon='pi pi-copy' label='Link de invitación' severity='help' 
@@ -284,10 +284,6 @@ function App() {
       <Navbar />
       <div style={{paddingTop: "4rem"}} />
         <div className="card justify-content-center">
-          <div className='row ds-flex gap-5'>
-            {(user) && (<ArrowLeft />)}
-            <h1>Calendary</h1>
-          </div>
           <Toast ref={toast} position="top-center" />
           {(!codeExist) && (<NoCodeSection />)}
           {(codeExist && !user) && (<SectionCalendarys />)}
