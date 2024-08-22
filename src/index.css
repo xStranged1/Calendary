@@ -4,8 +4,6 @@
   line-height: 24px;
   font-weight: 400;
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -22,45 +20,7 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  padding-bottom: 23px;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #fefefe;
-  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
-}
-
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-:root {
-  color: #1b2b3a;
-  background-color: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #1b2b3a;
-    background-color: #fefefe;
-  }
-  a:hover {
-    color: #747bff;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #fefefe;
-    background-color: #1b2b3a;
-  }
-  body {
-    background-color: #1b2b3a;
-    color: #fefefe;
-  }
-  a:hover {
-    color: #747bff;
-  }
 }

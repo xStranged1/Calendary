@@ -102,23 +102,25 @@ const SectionUsers = ( {session, code, eventName, handleViewUser, getParticipant
 
 
     return(
-      <div style={{padding: 100, backgroundColor: "#fefefe", border: 1, borderRadius: 5}}>
-          <label htmlFor="eventname" className="font-semibold ">
+      <div className='modal-add-user'>
+          <label htmlFor="eventname" className="font-semibold" style={{float: 'left', marginBottom: 5, fontFamily: 'Poppins'}}>
               Participante
           </label>
-        <div>
-          <InputText placeholder='Nombre del participante' value={inputUsername} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)} />
+        <div style={{marginTop: 5}}>
+          <InputText placeholder='Nombre del participante' value={inputUsername} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)} 
+            style={{fontFamily: 'Poppins'}}/>
         </div>
 
-        <div style={{flex: 1, flexDirection: 'row', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginTop: 20}}>
-          <div>
-            <Button label='Agregar' severity='success' onClick={(e)=>handleAddUser(inputUsername, e)} />
-          </div>
+        <div style={{flex: 1, flexDirection: 'row', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginTop: 20}}>
           <div>
             <Button label='Cancelar' severity='danger' onClick={(e)=>{
               setDialogVisibility(false)
               hide(e)
             }} />
+          </div>
+          <div>
+            <Button label='Agregar' severity='success' onClick={(e)=>handleAddUser(inputUsername, e)} />
           </div>
         </div>
           

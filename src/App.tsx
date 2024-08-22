@@ -41,7 +41,6 @@ function App() {
         setSession(session)
         console.log("session useEffect");
         console.log(session);
-        
       })
 
       const {
@@ -186,14 +185,7 @@ function App() {
           {(description) && (<div style={{justifyContent: 'center', width: "70%", alignSelf: 'center'}}><p className='description'>{description}</p></div>)}
           {(hostName) && ( <div><h2>Anfitrión del evento: {hostName}</h2></div> )}
 
-          {(!session) && <Button style={{width: 250}} icon='pi pi-google' size='small' label='Iniciar sesión con Google' onClick={()=> {
-            supabase.auth.signInWithOAuth({
-              provider: 'google',
-              options: {
-                redirectTo: 'http://localhost:5173/Calendary'+"?code="+codeURL
-              }
-            })
-          }} />}
+          
 
         </header>
         <div className='section-main' style={{flexWrap: 'wrap'}}>
@@ -213,6 +205,57 @@ function App() {
   }
 
   
+
+  const ArrowLeft = () => {
+
+    return(
+      <div>
+        <Button icon='pi pi-arrow-left' onClick={()=> {
+          window.scrollTo(0,0)
+          setUser(null)
+          }} 
+        />
+      </div>
+      
+    )
+  }
+
+
+  const BtnSignIn = () => {
+    
+    return(
+      <Button style={{width: 250}} icon='pi pi-google' size='small' label='Iniciar sesión con Google' onClick={()=> {
+      supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'http://localhost:5173/Calendary'+"?code="+codeURL
+        }
+      })
+    }} />
+    )
+  }
+
+  const Navbar = () => {
+
+    return(
+      <div className='navbar' style={{flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{marginLeft: 120, display: 'flex', gap: 50,alignItems: 'center'}}>
+          {(user) && (<ArrowLeft />)}
+          <h2>Calendary</h2>
+        </div>
+      
+        <div style={{marginRight: 30}}>
+          {(!session) && (<BtnSignIn />)}
+          {(session) && (
+            <div>
+              <h3>Logeado como {session.user.user_metadata.name}!</h3>
+            </div>
+          )}
+        </div>
+        
+      </div>
+    )
+  }
 
   const NoCodeSection = () => {
     const [inputCode, setInputCode] = useState<string>('');
@@ -238,22 +281,20 @@ function App() {
   return (
       
     <div>
+      <Navbar />
+      <div style={{paddingTop: "4rem"}} />
         <div className="card justify-content-center">
           <div className='row ds-flex gap-5'>
-            {(user) && (<Button icon='pi pi-arrow-left' onClick={()=> {
-              window.scrollTo(0,0)
-              setUser(null)
-            }} />)}
+            {(user) && (<ArrowLeft />)}
             <h1>Calendary</h1>
           </div>
           <Toast ref={toast} position="top-center" />
           {(!codeExist) && (<NoCodeSection />)}
           {(codeExist && !user) && (<SectionCalendarys />)}
           {(codeExist && user) && (<WeekHours user={user} codeEvent={codeURL} showSuccessAvaiable={showSuccessAvaiable} />)}
-          
-
         </div>
-        <Footer />
+      <div style={{marginTop: "4rem"}} />
+      <Footer />
     </div>
   );
 }
