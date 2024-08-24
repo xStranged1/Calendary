@@ -110,6 +110,24 @@ a:hover {
   color: var(--text-color) 
 }
 
+.modal-leave-feedback{
+  padding-inline: 80px;
+  padding-block: 40px;
+  border: 1px;
+  border-radius: 10px;
+  background-color: var(--bg-modal);
+  color: var(--text-color);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 10px;
+  gap: 5px;
+}
+
 .navbar {
   position: absolute;
   top: 0;

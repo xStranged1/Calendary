@@ -64,8 +64,8 @@ function App() {
   useEffect(() => {
     console.log('renderiza todo');
     console.log(session);
-
     window.scrollTo(0, 0)
+
 
     const getEventData = async (code: string) => {
       let { data } = await supabase.from('event').select('*').eq('code', code)
@@ -87,7 +87,6 @@ function App() {
       setDescription(description)
       setEstimatedDate(estimatedDate)
       setCodeExist(true)
-      window.scrollTo(0, 0)
     }
 
 
