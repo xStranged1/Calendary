@@ -18,7 +18,7 @@ const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipant
   const [dialogConfirmVisibility, setDialogConfirmVisibility] = useState<boolean>(false);
   const [confirmedUser, setConfirmedUser] = useState(null)
 
-  const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
+  const { showToast, showSuccessAddUser } = useToast(toast)
 
   useEffect(() => {
     const getUsers = async (code) => {

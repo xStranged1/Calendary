@@ -166,7 +166,7 @@ const getIntervalsDay = (intersection) => {
         }
         let j = 0
         if(checkpoint){ //load checkpoint
-            console.log('load checkpoint ', checkpoint);
+            //console.log('load checkpoint ', checkpoint);
             i = checkpoint.i
             j = checkpoint.j
             prevInterval = checkpoint.prevInterval
@@ -175,17 +175,17 @@ const getIntervalsDay = (intersection) => {
         const user = intersection[i]
         const username = user.username
         const avaiable = user.avaiable
-        console.log('check user: '+username);
-        console.log("i: "+i);
+        // console.log('check user: '+username);
+        // console.log("i: "+i);
         
         while (j < avaiable.length) { // check interval in a user
             canSave = true
             totalCount++
             const currentInterval = avaiable[j]
-            console.log("j: "+j);
-            console.log('check interval: ',currentInterval);
+            // console.log("j: "+j);
+            // console.log('check interval: ',currentInterval);
             const copyPrevInterval = structuredClone(prevInterval)
-            console.log("copyPrevInterval: ",copyPrevInterval);
+            // console.log("copyPrevInterval: ",copyPrevInterval);
             
             if (!prevInterval && j < avaiable.length-1){
                 let objCheckpoint: Checkpoint = {
@@ -193,7 +193,7 @@ const getIntervalsDay = (intersection) => {
                     j: j+1,
                     prevInterval: null
                 }
-                console.log('guarda checkpoint');
+                // console.log('guarda checkpoint');
                 checkpoints.push(objCheckpoint)
             }
 
@@ -202,7 +202,7 @@ const getIntervalsDay = (intersection) => {
                 cruce = getCruce(prevInterval, currentInterval)
             }
             if (cruce) {
-                console.log('cruce: ',cruce);
+                // console.log('cruce: ',cruce);
                 prevInterval = cruce;
                 if (j < avaiable.length-1){ //hay cruce pero faltan intervalos por checkear, capaz que pueden coincidir mas
                     let objCheckpoint: Checkpoint = {
@@ -210,14 +210,14 @@ const getIntervalsDay = (intersection) => {
                         j: j+1,
                         prevInterval: copyPrevInterval
                     }
-                    console.log('guarda checkpoint');
+                    // console.log('guarda checkpoint');
                     checkpoints.push(objCheckpoint)
                     break
                 }
             } 
             
             if (!cruce) {
-                console.log('no coincide con anterior: ',prevInterval);
+                // console.log('no coincide con anterior: ',prevInterval);
                 canSave = false
             }
             if (!prevInterval) prevInterval = currentInterval
@@ -228,16 +228,16 @@ const getIntervalsDay = (intersection) => {
         }//end while intervals
         
         if (i == intersection.length-1){ //lastUser
-            console.log('ultimo usu: '+username);
+            //console.log('ultimo usu: '+username);
             
             if(prevInterval && canSave) {
-                console.log('se guarda en intervalsDay ',prevInterval)
+                //console.log('se guarda en intervalsDay ',prevInterval)
                 intervalsDay.push(prevInterval)
             }
 
 
-            console.log("checkpoints");
-            console.log(checkpoints);
+            //console.log("checkpoints");
+            //console.log(checkpoints);
             if(checkpoints.length > 0){
                 if(checkpoints.length == 1){
                     checkpoint = checkpoints[0]
@@ -257,8 +257,8 @@ const getIntervalsDay = (intersection) => {
         i++
     }// end while users
     
-    console.log("intervalsDay");
-    console.log(intervalsDay);
+    //console.log("intervalsDay");
+    //console.log(intervalsDay);
     
 
     
@@ -270,9 +270,7 @@ const getIntervalsDay = (intersection) => {
 export const getFiltered = (intersections, nMax) => {
 
     
-    console.log("getFiltered");
-    console.log("getFiltered");
-    console.log("getFiltered");
+    ////console.log("getFiltered");
     
     let intervals: Intervals = initialIntervals
    
@@ -284,13 +282,10 @@ export const getFiltered = (intersections, nMax) => {
             let findWithMax = false
             while (!find) {
                 for (let tryN = nMax; tryN > 0; tryN--) {
-                    console.log("intersection["+day+"] = ");
-                    console.log("intersection["+day+"] = ");
-                    console.log("intersection["+day+"] = ");
-                    console.log("intersection["+day+"] = ");
-                    console.log("intersection["+day+"] = ");
-                    console.log("intersection["+day+"] = ");
-                    console.log(intersection);
+                    //console.log("intersection["+day+"] = ");
+                    //console.log("intersection["+day+"] = ");
+                    //console.log("intersection["+day+"] = ");
+                    //console.log(intersection);
 
                     if (intersection.length == nMax){
                         find = true

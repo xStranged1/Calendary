@@ -39,8 +39,8 @@ function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
-      console.log("session useEffect");
-      console.log(session);
+      // console.log("session useEffect");
+      // console.log(session);
     })
 
     const {
@@ -62,8 +62,8 @@ function App() {
 
 
   useEffect(() => {
-    console.log('renderiza todo');
-    console.log(session);
+    //console.log('renderiza todo');
+    //console.log(session);
     window.scrollTo(0, 0)
 
 
@@ -139,7 +139,7 @@ function App() {
         .update({ estimated_date: dates })
         .eq('code', codeURL)
         .select()
-      console.log(data);
+      //console.log(data);
 
       if (!error) {
         showToast('success', 'La fecha estimativa del evento', 'Ha sido guardada con exito')
@@ -303,7 +303,7 @@ function App() {
         {(codeExist && user) && (<WeekHours user={user} codeEvent={codeURL} showSuccessAvaiable={showSuccessAvaiable} />)}
       </div>
       <div style={{ marginTop: 70 }} />
-      <Footer />
+      <Footer toast={toast} />
 
     </div>
   );
