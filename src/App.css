@@ -82,7 +82,6 @@ a:hover {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 100%;
   margin-bottom: 0.5rem;
 }
 
@@ -141,7 +140,9 @@ a:hover {
 }
 
 .footer {
+  flex-wrap: wrap;
   height: 6rem;
+  gap: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -149,6 +150,27 @@ a:hover {
   background-color: var(--bg-navbar);
   backdrop-filter: blur(10px);
   color: #fefefe;
+}
+
+@media(max-width: 600px) {
+  .c-width{
+    width: 450px;
+    font-size: small;
+  }
+}@media(max-width: 500px) {
+  .c-width{
+    width: 300px;
+  }
+  .all-content{
+    max-width: 500px;
+  }
+}@media(max-width: 400px) {
+  .c-width{
+    width: 300px;
+  }
+  h4{
+    font-size: small;
+  }
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -172,9 +194,5 @@ a:hover {
     padding-top: 70px;
     padding-bottom: 70px;
   }
-
-
-
-  
   
 }

@@ -128,7 +128,6 @@ export default function Footer({ toast }) {
                 onClick={() => setDialogVisibility(true)}
             />
 
-
             <a href="https://primereact.org/" target='_blank' className='row flex' style={{ color: "#fff" }}>
                 <i className="pi pi-prime" style={{ fontSize: '1.6rem', color: "#07b7d4", marginRight: 7 }}></i>
                 <h4>PRIMEREACT</h4>

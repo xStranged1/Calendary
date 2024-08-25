@@ -20,20 +20,20 @@ import { useMountEffect } from 'primereact/hooks';
 import { Messages } from 'primereact/messages';
 import { Message } from 'primereact/message';
 
-const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
+const WeekHours = ({ user, codeEvent, showSuccessAvaiable }) => {
 
-  
+
   const avaiable = (user.avaiable) ? user.avaiable : initialIntervals
 
   const checks = getCheckeds(avaiable)
-  
+
   const [checkeds, setCheckeds] = useState(checks);
   const [allIntervals, setAllIntervals] = useState<Intervals | null>(avaiable);
 
   console.log('rendeweek');
-  window.scrollTo(0,0)
+  window.scrollTo(0, 0)
 
-  const Day = ( {day} ) => {
+  const Day = ({ day }) => {
 
     const [invalidRange, setInvalidRange] = useState<boolean>(false);
     const initialCheck = (checkeds) ? checkeds[day] : false
@@ -42,14 +42,14 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
 
     let getIntervals = (allIntervals) ? allIntervals[day] : []
 
-    let firstInterval =null
-    if(getIntervals.length>0) firstInterval = getIntervals[0]
+    let firstInterval = null
+    if (getIntervals.length > 0) firstInterval = getIntervals[0]
 
-    
+
     let hourStart, hourEnd
-    if(firstInterval){
-      hourStart=firstInterval.hourStart
-      hourEnd=firstInterval.hourEnd
+    if (firstInterval) {
+      hourStart = firstInterval.hourStart
+      hourEnd = firstInterval.hourEnd
     }
     const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>(hourStart);
     const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>(hourEnd);
@@ -57,34 +57,27 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
     getIntervals = getIntervals.slice(1, getIntervals.length)
     const [intervals, setIntervals] = useState<Interval[]>(getIntervals);
 
-    console.log('rendeDay');
-    console.log("intervals");
-    console.log(intervals);
-    console.log("allIntervals");
-    console.log(allIntervals);
-
-
     const handleChecked = () => {
       let newChecks = checkeds
       newChecks[day] = !newChecks[day]
       setCheckeds(newChecks)
       setChecked(checked => !checked)
-      if (checked){
+      if (checked) {
         setIntervals([])
       }
     }
 
     const handleChangeSelectedHour = (hour: Hour, isStart) => {
       let validRange;
-      if (isStart){
+      if (isStart) {
         validRange = isValidRange(hour, selectedEndHour)
         setSelectedStartHour(hour)
-      }else{
+      } else {
         validRange = isValidRange(selectedStartHour, hour)
         setSelectedEndHour(hour)
       }
 
-      if(!validRange) setInvalidRange(true)
+      if (!validRange) setInvalidRange(true)
 
       let objNewInterval: Interval = {
         hourStart: (isStart) ? hour : selectedStartHour,
@@ -98,9 +91,9 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
 
 
     }
-    
+
     const handleAdd = () => {
-      if(!checked){
+      if (!checked) {
         handleChecked()
       }
       let newInterval = intervals
@@ -116,10 +109,8 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
       let updateInterval = newAllIntervals[day]
       updateInterval = updateInterval.push(objNewInterval)
       setAllIntervals(newAllIntervals)
-      console.log("HandleAdd newAllIntervals");
-      console.log(newAllIntervals);
-      
-      setChange(prev=>!prev)
+
+      setChange(prev => !prev)
     }
     const handleDelete = () => {
       setIntervals([])
@@ -130,12 +121,12 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
       setSelectedEndHour(null)
     }
 
-    const Interval = ({data, indexInterval}) => {
-      
+    const Interval = ({ data, indexInterval }) => {
+
       const [selectedIntervalStartHour, setSelectedIntervalStartHour] = useState<Hour | null>(data.hourStart);
       const [selectedIntervalEndHour, setSelectedIntervalEndHour] = useState<Hour | null>(data.hourEnd);
       const [visible, setVisible] = useState<boolean>(true)
-      
+
       const handleDeleteInterval = () => {
         let newIntervals = intervals
         newIntervals.splice(indexInterval, 1)
@@ -154,12 +145,8 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
         }
         if (!isValid) setInvalidRange(true)
         let newInterval = intervals
-        console.log('initialIntervals');
-        console.log(intervals);
-        console.log('oter');
-        console.log(allIntervals[day]);
-        
-        
+
+
         let objNewInterval: Interval = {
           hourStart: (isStart) ? hour : selectedIntervalStartHour,
           hourEnd: (isStart) ? selectedIntervalEndHour : hour
@@ -167,98 +154,88 @@ const WeekHours = ( {user, codeEvent, showSuccessAvaiable} ) => {
 
         newInterval[indexInterval] = objNewInterval
         setIntervals(newInterval)
-        console.log("newInterval");
-        console.log(newInterval);
-        
         let newAllIntervals = allIntervals
         let firstInterval = newAllIntervals[day]
         firstInterval = firstInterval[0]
-        console.log("firstInterval");
-        console.log(firstInterval);
         let cloneInt = structuredClone(newInterval)
         cloneInt.unshift(firstInterval)
-        console.log("newInterval2");
-        console.log(cloneInt);
 
         newAllIntervals[day] = cloneInt
         setAllIntervals(newAllIntervals)
-        console.log("newAllIntervals SETED");
-        console.log(newAllIntervals);
-        
+
       }
-      
+
 
       const start = (selectedIntervalStartHour) ? selectedIntervalStartHour.toString() : "Desde"
       const end = (selectedIntervalEndHour) ? selectedIntervalEndHour.toString() : "Hasta"
-      return(
+      return (
         <div className={`box-day ${(!visible ? 'ds-none' : '')}`}>
-          <div><Dropdown placeholder={start} value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, true)} options={hours} optionLabel="hour" 
-              className="w-full md:w-8rem dropdown-hour"
-               /></div>
-            <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
-            <div><Dropdown placeholder={end} value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, false)} options={hours} optionLabel="hour" 
-              className="w-full md:w-8rem dropdown-hour" 
-              /></div>
-            <BtnDelete handleDelete={handleDeleteInterval} />
+          <div><Dropdown placeholder={start} value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, true)} options={hours} optionLabel="hour"
+            className="w-full md:w-8rem dropdown-hour"
+          /></div>
+          <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
+          <div><Dropdown placeholder={end} value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, false)} options={hours} optionLabel="hour"
+            className="w-full md:w-8rem dropdown-hour"
+          /></div>
+          <BtnDelete handleDelete={handleDeleteInterval} />
         </div>
       )
     }
 
-      return(
-        <>
+    return (
+      <>
         <div className='box-day'>
           {/*
           {(invalidRange && (<div className="card flex"><Message severity='error' text="La hora de inicio debería ser menor a la hora de fín" /><p>alg</p></div>))}
           }
           */}
-            <Checkbox onChange={handleChecked} checked={checked}></Checkbox>
-            <button style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexDirection: 'row', margin: 5, marginRight: 7}} onClick={() => handleChecked()}>
-              <p className='p-day'>{day}</p>
-            </button>
-            <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, true)} options={hours} optionLabel="hour" 
-              className="w-full md:w-8rem dropdown-hour"
-              disabled={!checked} /></div> 
-            <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
-            <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, false)} options={hours} optionLabel="hour" 
-              className="w-full md:w-8rem dropdown-hour" 
-              disabled={!checked}/></div>
-            <Button style={{marginLeft: 10, height: "2rem", width: "2rem"}}
-              onClick={handleAdd} severity='success' size='small' icon="pi pi-plus" />
-            <BtnDelete handleDelete={handleDelete} />
+          <Checkbox onChange={handleChecked} checked={checked}></Checkbox>
+          <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexDirection: 'row', margin: 5, marginRight: 7 }} onClick={() => handleChecked()}>
+            <p className='p-day'>{day}</p>
+          </button>
+          <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, true)} options={hours} optionLabel="hour"
+            className="w-full md:w-8rem dropdown-hour"
+            disabled={!checked} /></div>
+          <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
+          <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, false)} options={hours} optionLabel="hour"
+            className="w-full md:w-8rem dropdown-hour"
+            disabled={!checked} /></div>
+          <Button style={{ marginLeft: 10, height: "2rem", width: "2rem" }}
+            onClick={handleAdd} severity='success' size='small' icon="pi pi-plus" />
+          <BtnDelete handleDelete={handleDelete} />
         </div>
 
-            <div>
-                {intervals.map((interval: Interval, indexInterval) => (   /*testear aca*/ 
-                  <div key={indexInterval}>
-                      <Interval data={interval} indexInterval={indexInterval} /> 
-                  </div>
-                  )
-                )}
-            </div> 
-          
-        </>
-        
-      )
-    }
-    
-    return(
-      <aside style={{ flex: 1, marginBottom:"4rem" }}>
-
-        <div style={{marginBottom: 70}} />
-        <div className="card justify-content-center align-items-center card-week">
-          <h2>Disponibilidad de {user.username}</h2>
-          <div style={{marginTop: 40, marginBottom: 30}}>
-            {DayOfWeek.map((day) => (
-              <div key={day} style={{marginBottom: 25}}>
-                <Day day={day} />
-              </div>
-            ))}
-            <div style={{marginTop: 30}}></div>
-            <BtnSubmit handleSubmit={() => handleSubmitAvaiable(user, allIntervals, showSuccessAvaiable)} />
-            {/* <Button label='Ver allAvaiable' onClick={()=> console.log(allIntervals)} />*/}
-          </div>
+        <div>
+          {intervals.map((interval: Interval, indexInterval) => (   /*testear aca*/
+            <div key={indexInterval}>
+              <Interval data={interval} indexInterval={indexInterval} />
+            </div>
+          )
+          )}
         </div>
-      </aside>
+
+      </>
+
     )
   }
+
+  return (
+    <aside style={{ flex: 1, marginBottom: "4rem" }}>
+
+      <div style={{ marginBottom: 70 }} />
+      <div className="card justify-content-center align-items-center card-week">
+        <h2>Disponibilidad de {user.username}</h2>
+        <div style={{ marginTop: 40, marginBottom: 30 }}>
+          {DayOfWeek.map((day) => (
+            <div key={day} style={{ marginBottom: 25 }}>
+              <Day day={day} />
+            </div>
+          ))}
+          <div style={{ marginTop: 30 }}></div>
+          <BtnSubmit handleSubmit={() => handleSubmitAvaiable(user, allIntervals, showSuccessAvaiable)} />
+        </div>
+      </div>
+    </aside>
+  )
+}
 export default WeekHours

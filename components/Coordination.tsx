@@ -152,13 +152,6 @@ export default function Coordination({ participants }) {
     )
   }
 
+  if (filteredIntervals) return <Intersections />
 
-  return (
-    <div>
-      {(filteredIntervals) && (<Intersections />)}
-      {/* <Calendar value={dates} 
-              onChange={(e) => setDates(e.value)}
-              selectionMode='multiple' inline /> */}
-    </div>
-  )
 }

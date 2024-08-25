@@ -151,7 +151,7 @@ function App() {
     }
 
     return (
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, marginTop: 20, marginBottom: 15 }}>
         <h2>Fecha estimativa del evento</h2>
         <div className="card justify-content-center">
           <Calendar value={dates}
@@ -203,7 +203,6 @@ function App() {
           </div>
         </div>
 
-        <div style={{ marginTop: 100 }} />
         <Coordination participants={participants} />
       </section>
     )

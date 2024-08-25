@@ -17,8 +17,20 @@ const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipant
   const [selectedUser, setSelectedUser] = useState(null)
   const [dialogConfirmVisibility, setDialogConfirmVisibility] = useState<boolean>(false);
   const [confirmedUser, setConfirmedUser] = useState(null)
+  const [SCREEN_WIDTH, setSCREEN_WIDTH] = useState(() => {
+    return window.innerWidth
+  })
 
   const { showToast, showSuccessAddUser } = useToast(toast)
+
+  let sizeDateTable
+  if (SCREEN_WIDTH < 460) {
+    sizeDateTable = 'small';
+  } else if (SCREEN_WIDTH < 420) {
+    sizeDateTable = 'normal';
+  } else if (SCREEN_WIDTH < 800) {
+    sizeDateTable = 'large';
+  }
 
   useEffect(() => {
     const getUsers = async (code) => {
@@ -294,22 +306,22 @@ const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipant
 
       <DialogConfirm />
 
-      <div className='data-table'>
-        <div>
-          <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
-            style={{ borderWidth: 1, flex: 3, borderStyle: 'solid', borderColor: "#ccc" }}
-            paginator rows={5}
-            metaKeySelection={false}
-            onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
-            <Column field="username" header="Nombre" body={userView}></Column>
-            <Column field="is_invited" header="Invitado"></Column>
-            <Column field="attendance_confirmed" body={attendanceView} headerTooltip={textAttendanceTooltip} header={headerAttendance}></Column>
-            <Column field="avaiableText" header='Disponibilidad' body={avaiableView}></Column>
-          </DataTable>
-        </div>
+      <div className='data-table card'>
+        <DataTable value={participants} selectionMode='single' selection={selectedUser} onRowSelect={handleViewAvaible}
+          style={{ borderWidth: 1, borderStyle: 'solid', borderColor: "#ccc" }}
+          className='calendar-max-width c-width'
+          size={sizeDateTable}
+          paginator rows={5}
+          metaKeySelection={false}
+          onSelectionChange={(e) => setSelectedUser(e.value)} dataKey="id" tableStyle={{ minWidth: '25rem', maxWidth: '30rem' }}>
+          <Column field="username" header="Nombre" body={userView}></Column>
+          <Column field="is_invited" header="Invitado"></Column>
+          <Column field="attendance_confirmed" body={attendanceView} headerTooltip={textAttendanceTooltip} header={headerAttendance}></Column>
+          <Column field="avaiableText" header='Disponibilidad' body={avaiableView}></Column>
+        </DataTable>
       </div>
 
-      <Button icon='pi pi-user-plus' className='mt-3' severity='success' label='Agregar participante' onClick={() => setDialogVisibility(true)} />
+      <Button icon='pi pi-user-plus' className='mt-3 mb-3' severity='success' label='Agregar participante' onClick={() => setDialogVisibility(true)} />
 
     </div>
   )
