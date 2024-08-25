@@ -171,11 +171,11 @@ const WeekHours = ({ user, codeEvent, showSuccessAvaiable }) => {
       return (
         <div className={`box-day ${(!visible ? 'ds-none' : '')}`}>
           <div><Dropdown placeholder={start} value={selectedIntervalStartHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, true)} options={hours} optionLabel="hour"
-            className="w-full md:w-8rem dropdown-hour"
+            className="w-full md:w-[8rem] sm:min-w-[6rem] dropdown-hour"
           /></div>
           <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
           <div><Dropdown placeholder={end} value={selectedIntervalEndHour} onChange={(e: DropdownChangeEvent) => handleChangeInterval(e.value, false)} options={hours} optionLabel="hour"
-            className="w-full md:w-8rem dropdown-hour"
+            className="w-full md:w-[8rem] sm:min-w-[6rem] dropdown-hour"
           /></div>
           <BtnDelete handleDelete={handleDeleteInterval} />
         </div>
@@ -194,11 +194,11 @@ const WeekHours = ({ user, codeEvent, showSuccessAvaiable }) => {
             <p className='p-day'>{day}</p>
           </button>
           <div><Dropdown placeholder="Desde" value={selectedStartHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, true)} options={hours} optionLabel="hour"
-            className="w-full md:w-8rem dropdown-hour"
+            className="w-full md:w-[8rem] sm:min-w-[6rem] dropdown-hour"
             disabled={!checked} /></div>
           <p style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: 'bold' }}>-</p>
           <div><Dropdown placeholder="Hasta" value={selectedEndHour} onChange={(e: DropdownChangeEvent) => handleChangeSelectedHour(e.value, false)} options={hours} optionLabel="hour"
-            className="w-full md:w-8rem dropdown-hour"
+            className="w-full md:w-[8rem] sm:min-w-[6rem] dropdown-hour"
             disabled={!checked} /></div>
           <Button style={{ marginLeft: 10, height: "2rem", width: "2rem" }}
             onClick={handleAdd} severity='success' size='small' icon="pi pi-plus" />

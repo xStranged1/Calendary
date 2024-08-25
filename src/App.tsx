@@ -243,7 +243,7 @@ function App() {
   const Navbar = () => {
 
     return (
-      <div className='navbar' style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className='navbar' style={{ flex: 1, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-around', alignItems: 'center' }}>
         <div style={{ marginLeft: 120, display: 'flex', gap: 50, alignItems: 'center' }}>
           {(user) && (<ArrowLeft />)}
           <h2>Calendary</h2>
@@ -276,7 +276,7 @@ function App() {
       <div>
         <h2>Ingresa a una sala</h2>
         <InputText placeholder='Codigo' value={inputCode} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputCode(e.target.value)} />
-        <a href={`http://localhost:5173?code=${inputCode}`} style={{ marginLeft: 10 }}><Button label='Ingresar' /></a>
+        <a href={`https://xstranged1.github.io/Calendary/?code=${inputCode}`} style={{ marginLeft: 10 }}><Button label='Ingresar' /></a>
         <div style={{ marginTop: 40 }} />
         <h2>Crear evento</h2>
         <Button label='Crear evento' onClick={() => setDialogVisibility(true)} />

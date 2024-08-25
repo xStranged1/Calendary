@@ -163,6 +163,11 @@ a:hover {
   }
   .all-content{
     max-width: 500px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    overflow-x: hidden;
   }
 }@media(max-width: 400px) {
   .c-width{
