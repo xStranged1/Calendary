@@ -9,6 +9,7 @@ import { Column } from 'primereact/column';
 import { textAttendanceTooltip } from '../constants/texts'
 import { User } from '../constants/user'
 import { useToast } from './toast/toast';
+import { PUBLIC_URL } from '../constants/consts';
 
 const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipants, toast }) => {
 
@@ -78,12 +79,7 @@ const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipant
   if (participants.length == 0 && !dialogVisibility) return (
     <div className='row'>
       <h3>No hay participantes en el evento</h3>
-      <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={() => {
-        setDialogVisibility(true)
-        console.log('algo');
-
-      }
-      } />
+      <Button icon='pi pi-user-plus' severity='success' label='Agregar participante' onClick={() => { setDialogVisibility(true) }} />
     </div>
   )
 
@@ -101,7 +97,7 @@ const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipant
         .select()
 
       if (!error) {
-        location.replace(`http://localhost:5173?code=${code}`)
+        location.replace(`${PUBLIC_URL}?code=${code}`)
         window.scrollTo(0, 0)
         showSuccessAddUser(username)
         hide(e)
@@ -111,6 +107,11 @@ const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipant
 
     }
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        handleAddUser(inputUsername, e)
+      }
+    };
 
     return (
       <div className='modal-add-user'>
@@ -119,6 +120,7 @@ const SectionUsers = ({ session, code, eventName, handleViewUser, getParticipant
         </label>
         <div style={{ marginTop: 5 }}>
           <InputText placeholder='Nombre del participante' value={inputUsername}
+            onKeyDown={handleKeyDown}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputUsername(e.target.value)}
             style={{ fontFamily: 'Poppins' }} />
         </div>

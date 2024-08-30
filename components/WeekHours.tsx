@@ -10,7 +10,7 @@ import { handleSubmitAvaiable } from '../utils/handleSubmitAvaiable'
 import { getCheckeds } from '../utils/getCheckeds'
 
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
-import { DayOfWeek, defaultChecks, Hour, hours, initialIntervals, Interval, Intervals, Mode } from '../constants/hours'
+import { DayOfWeek, defaultChecks, Hour, hours, Interval, Intervals, Mode } from '../constants/hours'
 import BtnAdd from '../components/buttons/BtnAdd'
 import BtnDelete from '../components/buttons/BtnDelete'
 import BtnSubmit from '../components/buttons/BtnSubmit'
@@ -22,15 +22,27 @@ import { Message } from 'primereact/message';
 
 const WeekHours = ({ user, codeEvent, showSuccessAvaiable }) => {
 
-
-  const avaiable = (user.avaiable) ? user.avaiable : initialIntervals
-
-  const checks = getCheckeds(avaiable)
-
+  const checks = getCheckeds(user.avaiable)
   const [checkeds, setCheckeds] = useState(checks);
-  const [allIntervals, setAllIntervals] = useState<Intervals | null>(avaiable);
+  const [allIntervals, setAllIntervals] = useState<Intervals | null>(null);
 
-  console.log('rendeweek');
+  useEffect(() => {
+    if (user.avaiable) {
+      setAllIntervals(user.avaiable);
+    } else {
+      const initialIntervals = {
+        'Lun': [],
+        'Mar': [],
+        'Mie': [],
+        'Jue': [],
+        'Vie': [],
+        'Sab': [],
+        'Dom': []
+      }
+      setAllIntervals(initialIntervals);
+    }
+  }, [user]);
+
   window.scrollTo(0, 0)
 
   const Day = ({ day }) => {
@@ -53,6 +65,7 @@ const WeekHours = ({ user, codeEvent, showSuccessAvaiable }) => {
     }
     const [selectedStartHour, setSelectedStartHour] = useState<Hour | null>(hourStart);
     const [selectedEndHour, setSelectedEndHour] = useState<Hour | null>(hourEnd);
+
 
     getIntervals = getIntervals.slice(1, getIntervals.length)
     const [intervals, setIntervals] = useState<Interval[]>(getIntervals);

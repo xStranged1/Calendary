@@ -233,7 +233,7 @@ function App() {
         supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: 'http://localhost:5173/Calendary' + "?code=" + codeURL
+            redirectTo: `${PUBLIC_URL}?code=${codeURL}`
           }
         })
       }} />
