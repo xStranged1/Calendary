@@ -22,8 +22,6 @@ import './App.css';
 
 function App() {
 
-  console.log('app');
-
   const [codeURL, setCodeURL] = useState<string>('');
   const [codeExist, setCodeExist] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>('');
@@ -36,23 +34,25 @@ function App() {
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
 
 
-  const [actualSession, setSession] = useState(null)
+  const [actualSession, setSession] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!actualSession) setSession(session)
-      console.log("session useEffect");
-      // console.log(session);
-    })
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!actualSession && session) {
+        console.log('Actualiza session');
+        setSession(session);
+      }
+    };
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!actualSession) setSession(session)
-    })
+    fetchSession();
 
-    return () => subscription.unsubscribe()
-  }, [])
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!actualSession) setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
 
   useEffect(() => {
