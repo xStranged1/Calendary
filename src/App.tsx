@@ -22,6 +22,8 @@ import './App.css';
 
 function App() {
 
+  console.log('app');
+
   const [codeURL, setCodeURL] = useState<string>('');
   const [codeExist, setCodeExist] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>('');
@@ -34,19 +36,19 @@ function App() {
   const { showToast, showSuccessAddUser, showSuccess, showSuccessAvaiable, showCodeNotExist } = useToast(toast)
 
 
-  const [session, setSession] = useState(null)
+  const [actualSession, setSession] = useState(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      // console.log("session useEffect");
+      if (!actualSession) setSession(session)
+      console.log("session useEffect");
       // console.log(session);
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
+      if (!actualSession) setSession(session)
     })
 
     return () => subscription.unsubscribe()
@@ -196,7 +198,7 @@ function App() {
         </header>
         <div className='section-main' style={{ flexWrap: 'wrap' }}>
           <div style={{ alignSelf: 'flex-start', flex: 1 }}>
-            <SectionUsers session={session} eventName={eventName} code={codeURL} handleViewUser={handleViewUser} getParticipants={getParticipants} toast={toast} />
+            <SectionUsers session={actualSession} eventName={eventName} code={codeURL} handleViewUser={handleViewUser} getParticipants={getParticipants} toast={toast} />
           </div>
           <div style={{ flex: 1 }}>
             <Disponibility />
@@ -256,10 +258,10 @@ function App() {
             localStorage.setItem('theme', newTheme ? 'dark' : 'light');
           }} /> */}
 
-          {(!session) && (<BtnSignIn />)}
-          {(session) && (
+          {(!actualSession) && (<BtnSignIn />)}
+          {(actualSession) && (
             <div>
-              <h3>Logeado como {session.user.user_metadata.name}!</h3>
+              <h3>Logeado como {actualSession.user.user_metadata.name}!</h3>
             </div>
           )}
         </div>

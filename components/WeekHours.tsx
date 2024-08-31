@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
 import 'primereact/resources/themes/lara-light-indigo/theme.css'; //theme
 import 'primereact/resources/primereact.min.css'; //core css
 import 'primeicons/primeicons.css'; //icons
@@ -10,15 +9,11 @@ import { handleSubmitAvaiable } from '../utils/handleSubmitAvaiable'
 import { getCheckeds } from '../utils/getCheckeds'
 
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
-import { DayOfWeek, defaultChecks, Hour, hours, Interval, Intervals, Mode } from '../constants/hours'
-import BtnAdd from '../components/buttons/BtnAdd'
+import { DayOfWeek, Hour, hours, Interval, Intervals } from '../constants/hours'
 import BtnDelete from '../components/buttons/BtnDelete'
 import BtnSubmit from '../components/buttons/BtnSubmit'
 import { Checkbox } from "primereact/checkbox";
 import { isValidRange } from '../utils/isValidRange'
-import { useMountEffect } from 'primereact/hooks';
-import { Messages } from 'primereact/messages';
-import { Message } from 'primereact/message';
 
 const WeekHours = ({ user, codeEvent, showSuccessAvaiable }) => {
 

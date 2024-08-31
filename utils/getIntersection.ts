@@ -266,9 +266,15 @@ const getIntervalsDay = (intersection) => {
     return intervalsDay
 }
 
+export const simplifyIntervals = (intervals) => {
+
+    console.log("intervals");
+    console.log(intervals);
+    return intervals
+}
+
 
 export const getFiltered = (intersections, nMax) => {
-
     
     ////console.log("getFiltered");
     
@@ -292,7 +298,8 @@ export const getFiltered = (intersections, nMax) => {
                         findWithMax = true
                         let intervalsDay = getIntervalsDay(intersection)
                         const nonRepIntervals = remRepIntervals(intervalsDay)
-                        intervals[day] = nonRepIntervals //interseccion de intervalos ese dia
+                        const simplifiedIntervals = simplifyIntervals(intervalsDay)
+                        intervals[day] = simplifiedIntervals //interseccion de intervalos ese dia
                         break
                     }
                     if(intersection.length < tryN){
@@ -303,7 +310,6 @@ export const getFiltered = (intersections, nMax) => {
                 }
                 find=true;
             }
-            
             
         }
     }
